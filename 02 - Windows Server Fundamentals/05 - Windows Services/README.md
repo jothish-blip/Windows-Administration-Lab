@@ -1,5 +1,9 @@
 # Windows Services
 
+[Windows Server Fundamentals Overview](../README.md) | [Previous: Computer Management](../04%20-%20Computer%20Management/README.md) | [Next: Local Users & Groups](../06%20-%20Local%20Users%20and%20Groups/README.md) | [Related Lab: Manage Windows Services](../Lab-Exercise.md#practical-lab-06--explore-and-manage-windows-services)
+
+---
+
 ## 1. What is a Windows Service?
 
 A **Windows Service** is a background program or component that performs a specific function without requiring continuous interaction from a logged-in user.
@@ -81,7 +85,7 @@ When exploring the Services console, administrators frequently encounter the fol
 
 Services rarely operate in isolation. A service often depends on another service to function correctly.
 
-![alt text](<../Screenshots/25 - Dependencies.png>)
+![Service Dependencies](<../Screenshots/25 - Dependencies.png>)
 
 ```text
   Application
@@ -121,3 +125,24 @@ A SOC analyst investigates:
 * *Is it generating abnormal network activity?*
 
 You cannot recognize abnormal service behavior without first understanding what normal Windows Server administration looks like.
+
+## Summary
+
+In this module, I studied the architecture, lifecycle, and management of Windows Services. I learned the critical distinction between real-time Service Status (what the process is doing in memory right now) and Startup Type (how Windows initializes it during boot). Through analyzing Print Spooler dependencies on HTTP and RPC, I observed how service failures cascade. For defensive security, services represent a major persistence and privilege escalation vector, requiring vigilance when auditing Event ID 7045 and checking accounts executing under `SYSTEM`.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [Windows Services Architecture Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#5-windows-services-architecture)
+- **Interview Preparation:** [Windows Services Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/05%20-%20Windows%20Services.md)
+- **Practical Lab:** [Lab 06 - Explore and Manage Services](../Lab-Exercise.md#practical-lab-06)
+
+---
+
+## Navigation
+
+- **Previous Module:** [04 - Computer Management](../04%20-%20Computer%20Management/README.md)
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [06 - Local Users and Groups](../06%20-%20Local%20Users%20and%20Groups/README.md)
+- **Corresponding Lab:** [Practical Lab 06 - Explore and Manage Windows Services](../Lab-Exercise.md#practical-lab-06)

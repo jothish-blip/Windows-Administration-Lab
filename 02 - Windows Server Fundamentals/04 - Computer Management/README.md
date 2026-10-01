@@ -1,5 +1,9 @@
 # Computer Management
 
+[Windows Server Fundamentals Overview](../README.md) | [Previous: Roles vs Features](../03%20-%20Roles%20vs%20Features/README.md) | [Next: Windows Services](../05%20-%20Windows%20Services/README.md) | [Related Lab: Explore Computer Management](../Lab-Exercise.md#practical-lab-05--explore-computer-management)
+
+---
+
 ## 1. What is Computer Management?
 
 **Computer Management** is a Windows administrative console that provides a centralized interface for managing and troubleshooting different parts of a Windows computer or server.
@@ -101,7 +105,7 @@ Device Manager displays and manages the hardware devices recognized by Windows (
 
 Disk Management is a crucial tool that allows administrators to manage storage devices, partitions, and volumes.
 
-![alt text](<../Screenshots/22 - Disk Management.png>)
+![Disk Management](<../Screenshots/22 - Disk Management.png>)
 
 It provides detailed information about:
 
@@ -149,3 +153,24 @@ Understanding services is fundamental for security operations. If an unexpected 
 Microsoft groups all these tools inside **Computer Management** to provide a cohesive, single-pane-of-glass administrative experience.
 
 Instead of an administrator needing to memorize separate executable names or dig through the Control Panel to check a disk, restart a service, investigate an error log, and check a hardware driver, Computer Management organizes the complete underlying architecture of a single machine into one logical hierarchy.
+
+## Summary
+
+In this module, I studied Computer Management (`compmgmt.msc`) as the consolidated Microsoft Management Console (MMC) snap-in for host-level administration. I analyzed its three primary branches: System Tools (Task Scheduler, Event Viewer, Shared Folders, Device Manager), Storage (Disk Management), and Services. In SOC investigations, Computer Management serves as a fast triage console for inspecting active SMB sessions, reviewing Windows logs, and monitoring suspicious background services.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [System Administration Consoles Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#4-system-administration-and-consoles)
+- **Interview Preparation:** [Computer Management Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/04%20-%20Computer%20Management.md)
+- **Practical Lab:** [Lab 05 - Explore Computer Management](../Lab-Exercise.md#practical-lab-05)
+
+---
+
+## Navigation
+
+- **Previous Module:** [03 - Roles vs Features](../03%20-%20Roles%20vs%20Features/README.md)
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [05 - Windows Services](../05%20-%20Windows%20Services/README.md)
+- **Corresponding Lab:** [Practical Lab 05 - Explore Computer Management](../Lab-Exercise.md#practical-lab-05)

@@ -1,5 +1,9 @@
 # Windows Administration Lab Setup
 
+[Virtualization Track Overview](../README.md) | [Previous: Lab Architecture](../04%20-%20Lab%20Architecture/README.md) | [First Step: Install VirtualBox](01%20-%20Install%20VirtualBox.md) | [Next Track: Windows Server Fundamentals](../../02%20-%20Windows%20Server%20Fundamentals/README.md)
+
+---
+
 ## Overview
 
 This guide explains how to build the Windows Administration Lab used throughout this repository.
@@ -65,21 +69,27 @@ Before starting this guide, ensure you have the following:
 
 # Documentation Structure
 
-Follow the documents in the following order:
+Follow the setup guides in sequential order:
 
-1. Install VirtualBox
-2. Create Virtual Machines
-3. Configure Networking
-4. Verify Connectivity
+1. [01 - Install Oracle VirtualBox](01%20-%20Install%20VirtualBox.md)
+2. [02 - Create and Configure Virtual Machines](02%20-%20Create%20and%20Configure%20Virtual%20Machines.md)
+3. [03 - Configure Networking](03%20-%20Configure%20Networking.md)
+4. [04 - Verify Connectivity](04%20-%20Verify%20Connectivity.md)
 
 Each document contains:
 
 - Step-by-step instructions
-- Configuration details
+- Hardware and network configuration details
 - Verification steps
-- Screenshots
+- Screenshot evidence from the running lab
 
-Following this guide from start to finish will create a working Windows lab that will be used throughout the rest of this repository.
+Following this guide from start to finish creates a fully working, isolated Windows enterprise lab (`DC01` and `CLIENT01` on `SOC-LAB`).
+
 ---
 
-**Next**: [Install Oracle VirtualBox](01%20-%20Install%20VirtualBox.md)
+## Navigation
+
+- **Previous Module:** [04 - Lab Architecture](../04%20-%20Lab%20Architecture/README.md)
+- **Track Index:** [Virtualization Fundamentals](../README.md)
+- **Start Practical Setup:** [01 - Install Oracle VirtualBox](01%20-%20Install%20VirtualBox.md)
+- **Next Track:** [Windows Server Fundamentals](../../02%20-%20Windows%20Server%20Fundamentals/README.md)

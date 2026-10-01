@@ -1,5 +1,9 @@
 # Windows Server Editions
 
+[Windows Server Fundamentals Overview](../README.md) | [Next: Server Manager](../02%20-%20Server%20Manager/README.md) | [Related Labs: Lab 01 (Edition)](../Lab-Exercise.md#practical-lab-01--to-know-the-windows-server-edition) & [Lab 02 (System Info)](../Lab-Exercise.md#practical-lab-02--to-know-detailed-information-about-the-system)
+
+---
+
 We start with a simple question: Suppose Microsoft released only one version of Windows Server, would that work for all organizations?
 
 For example:
@@ -133,7 +137,7 @@ How you pay for Windows Server depends entirely on the edition you choose. Micro
 
 ## Virtualization Rights
 
-Virtualization rights dictate how many Virtual Machines (VMs) running Windows Server you are legally allowed to host on your physical server with a single license.
+Virtualization rights dictate how many Virtual Machines (VMs) running Windows Server you are legally allowed to host on your physical server with a single license. *(For a complete study of hypervisors, VM provisioning, and isolated networks, see [Virtualization Fundamentals](../../01%20-%20Virtualization/README.md)).*
 
 * **Standard Edition:** Allows for **2** Operating System Environments (OSEs) or Hyper-V containers. If you want to run 4 VMs, you must buy a second set of core licenses for the same physical server.
 * **Datacenter Edition:** Allows for **Unlimited** OSEs or Hyper-V containers. Once the physical hardware is licensed, you can spin up 10, 50, or 100 Windows Server VMs on that host without paying for extra Windows OS licenses.
@@ -152,3 +156,26 @@ Here is a comparison table showing how different organizations choose their edit
 | **Growing Enterprise** | 500+ Users | Medium (Needs 4 to 6 Virtual Machines) | Medium-High | **Standard Edition** *(Requires stacking multiple licenses)* |
 | **Large Enterprise / Cloud** | Thousands of Users | High (Needs 10+ Virtual Machines per physical host) | High | **Datacenter Edition** |
 | **IT Student / Homelabber** | 1 User | Testing & Learning environments | $0 | **Evaluation Edition** |
+
+## Summary
+
+In this module, I studied the core editions of Windows Server (Standard, Datacenter, Essentials, and Evaluation), Microsoft's core-based licensing model, and virtualization rights. I learned that Standard Edition provides rights for up to 2 VMs, making Datacenter Edition the cost-effective enterprise standard for high-density virtualized environments. For my training lab, the 180-day Evaluation Edition provides full enterprise functionality on DC01 without licensing overhead, which I verified using `winver` and `systeminfo`.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [Server Editions and Licensing Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#1-server-editions-and-licensing)
+- **Interview Preparation:** [Server Editions Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/01%20-%20Windows%20Server%20Editions.md)
+- **Practical Labs:** [Lab 01 (winver) & Lab 02 (systeminfo)](../Lab-Exercise.md#practical-lab-01)
+
+---
+
+## Navigation
+
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [02 - Server Manager](../02%20-%20Server%20Manager/README.md)
+- **Corresponding Labs:**
+  - [Practical Lab 01 - To Know the Windows Server Edition](../Lab-Exercise.md#practical-lab-01)
+  - [Practical Lab 02 - To Know Detailed Information About the System](../Lab-Exercise.md#practical-lab-02)
+- **Previous Track:** [Virtualization Fundamentals](../../01%20-%20Virtualization/README.md)

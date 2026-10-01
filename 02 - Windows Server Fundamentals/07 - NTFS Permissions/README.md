@@ -1,5 +1,9 @@
 # NTFS Permissions
 
+[Windows Server Fundamentals Overview](../README.md) | [Previous: Local Users & Groups](../06%20-%20Local%20Users%20and%20Groups/README.md) | [Next: Shared Folders](../08%20-%20Shared%20Folders/README.md) | [Related Labs: Lab 09 (Configure)](../Lab-Exercise.md#practical-lab-09--configure-ntfs-permissions) & [Lab 10 (Scenarios)](../Lab-Exercise.md#practical-lab-10--ntfs-permission-scenarios)
+
+---
+
 ## 1. What is NTFS?
 
 **NTFS** stands for **New Technology File System**. It is the primary file system used by modern Windows operating systems.
@@ -132,3 +136,26 @@ This advanced view breaks down the fundamental questions clearly:
 * **Access:** What are they allowed to do?
 * **Inherited from:** Where did this rule come from (Explicit or Parent)?
 * **Applies to:** How deep does this rule go (This folder only, or subfolders and files)?
+
+## Summary
+
+In this module, I studied the mechanics of NTFS permissions, Discretionary Access Control Lists (DACLs), and Access Control Entries (ACEs). I explored the six standard permissions (Full Control, Modify, Read & Execute, List Folder Contents, Read, Write) and analyzed how permission inheritance automatically flows from parent directories to child objects. Furthermore, I learned the critical Allow vs. Deny precedence hierarchy and established why enterprise environments avoid explicit Deny rules in favor of role-based Allow assignments.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [NTFS File System Security Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#7-ntfs-file-system-security)
+- **Interview Preparation:** [NTFS Permissions Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/07%20-%20NTFS%20Permissions.md)
+- **Practical Labs:** [Lab 09 (Configure NTFS) & Lab 10 (Permission Scenarios)](../Lab-Exercise.md#practical-lab-09)
+
+---
+
+## Navigation
+
+- **Previous Module:** [06 - Local Users and Groups](../06%20-%20Local%20Users%20and%20Groups/README.md)
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [08 - Shared Folders](../08%20-%20Shared%20Folders/README.md)
+- **Corresponding Labs:**
+  - [Practical Lab 09 - Configure NTFS Permissions](../Lab-Exercise.md#practical-lab-09)
+  - [Practical Lab 10 - NTFS Permission Scenarios](../Lab-Exercise.md#practical-lab-10)

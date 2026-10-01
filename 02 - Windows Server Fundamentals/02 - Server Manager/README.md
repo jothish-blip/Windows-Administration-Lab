@@ -1,5 +1,9 @@
 # Server Manager
 
+[Windows Server Fundamentals Overview](../README.md) | [Previous: Editions](../01%20-%20Windows%20Server%20Editions/README.md) | [Next: Roles vs Features](../03%20-%20Roles%20vs%20Features/README.md) | [Related Lab: Explore Server Manager](../Lab-Exercise.md#practical-lab-03--explore-the-server-manager)
+
+---
+
 ## 1. What is Server Manager?
 
 Server Manager can be defined as follows.
@@ -419,3 +423,24 @@ The overall Server Manager relationship can be represented as follows:
 ```
 
 *The objective is to understand the relationship rather than memorize the diagram.*
+
+## Summary
+
+In this module, I explored Server Manager as the primary centralized management console in Windows Server. I learned how the dashboard aggregates local server properties, installed roles (AD DS, DNS, File Services), and operational events in one place. I also studied the Manage menu for role deployment, the Tools menu for launching specialized MMC snap-ins, and the Best Practices Analyzer (BPA) for diagnostic compliance.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [Server Management Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#2-server-management-and-dashboards)
+- **Interview Preparation:** [Server Manager Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/02%20-%20Server%20Manager.md)
+- **Practical Lab:** [Lab 03 - Explore the Server Manager](../Lab-Exercise.md#practical-lab-03)
+
+---
+
+## Navigation
+
+- **Previous Module:** [01 - Windows Server Editions](../01%20-%20Windows%20Server%20Editions/README.md)
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [03 - Roles vs Features](../03%20-%20Roles%20vs%20Features/README.md)
+- **Corresponding Lab:** [Practical Lab 03 - Explore the Server Manager](../Lab-Exercise.md#practical-lab-03)

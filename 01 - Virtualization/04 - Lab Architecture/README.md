@@ -1,4 +1,8 @@
-# Why We Need This Lab
+# Lab Architecture & Topology
+
+[Virtualization Track Overview](../README.md) | [Previous: Snapshots](../03%20-%20Snapshots/README.md) | [Next: Lab Setup](../05%20-%20Lab%20Setup/README.md) | [Next Track: Windows Server Fundamentals](../../02%20-%20Windows%20Server%20Fundamentals/README.md)
+
+---
 
 ## Purpose
 
@@ -97,31 +101,23 @@ SOC Labs provide a safe environment to:
 - Simulate Cyber Attacks
 - Learn Windows Administration
 
----
-
-## Key Terms
-
-* **Windows Server**: An operating system designed to provide services, manage networks, and authenticate users.
-* **Domain Controller (DC)**: A server that responds to security authentication requests within a Windows Server domain.
-* **Internal Network**: An isolated network setting in VirtualBox allowing VMs to communicate with each other but not with the host or the internet.
-* **SOC Lab**: A safe, isolated environment used by Security Operations Center analysts to test, learn, and analyze threats safely.
-
----
-
-## Interview Questions
-
-* What is the primary purpose of building a SOC Lab?
-* What is a Domain Controller and what are its main responsibilities?
-* Why do we place the Windows Server and Windows 11 VMs on an Internal Network instead of NAT?
-* How does the Windows 11 Client interact with the Domain Controller during a user login?
-* What are some key services provided by a Windows Server?
-
----
-
 ## Summary
 
-- Windows Server acts as the Domain Controller.
-- Windows 11 acts as the Client Computer.
-- Both VMs communicate through an Internal Network.
-- This lab simulates a real company's network.
-- It is used to learn Windows Administration and SOC fundamentals.
+In this module, I designed the network architecture and identity topology for the SOC environment. By placing `DC01` (Windows Server at `192.168.10.10`) and `CLIENT01` (Windows 11 at `192.168.10.20`) on the private `SOC-LAB` internal network segment, I created an isolated enterprise domain (`soclab.local`). This architecture establishes the dual-machine foundation needed to study Active Directory authentication, Group Policy delivery, SMB file sharing, and security monitoring.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [Lab Architecture and Infrastructure Key Terms](../../Key%20Terms/Virtualization%20Fundamentals/README.md#5-lab-architecture-and-infrastructure)
+- **Interview Preparation:** [Lab Architecture Interview Questions & Answers](../../Interview%20Questions/Virtualization%20Fundamentals/05%20-%20Lab%20Architecture.md)
+- **Related Setup Lab:** [Verify Connectivity](../05%20-%20Lab%20Setup/04%20-%20Verify%20Connectivity.md)
+
+---
+
+## Navigation
+
+- **Previous Module:** [03 - Snapshots](../03%20-%20Snapshots/README.md)
+- **Track Index:** [Virtualization Fundamentals](../README.md)
+- **Next Module:** [05 - Lab Setup](../05%20-%20Lab%20Setup/README.md)
+- **Next Track:** [Windows Server Fundamentals](../../02%20-%20Windows%20Server%20Fundamentals/README.md)

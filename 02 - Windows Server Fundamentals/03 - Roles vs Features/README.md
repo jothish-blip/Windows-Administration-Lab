@@ -1,5 +1,9 @@
 # Windows Server: Roles and Features
 
+[Windows Server Fundamentals Overview](../README.md) | [Previous: Server Manager](../02%20-%20Server%20Manager/README.md) | [Next: Computer Management](../04%20-%20Computer%20Management/README.md) | [Related Lab: Explore Roles & Features](../Lab-Exercise.md#practical-lab-04--explore-roles-and-features)
+
+---
+
 ## 1. The Fundamental Concept
 
 A fresh Windows Server installation can perform basic operating-system tasks. However, for a server to become a Domain Controller, a DNS server, or a web server, it needs additional capabilities installed.
@@ -137,7 +141,7 @@ When navigating the installation wizard, an administrator progresses through spe
 4. **Server Roles:** The list of major jobs the server can perform (AD DS, DNS, DHCP, etc.).
 ![Select Server Roles](<../Screenshots/16-Select Server roles.png>)
 5. **Features:** The list of supporting capabilities (.NET, BitLocker, Failover Clustering, etc.).
-![Select FEautres](<../Screenshots/17-Select Features.png>)
+![Select Features](<../Screenshots/17-Select Features.png>)
 ---
 
 ### Roles and Features  Model
@@ -156,3 +160,24 @@ The overall lifecycle of planning and building a Windows Server can be visualize
 Server Responsibilities      Supporting Capabilities
 
 ```
+
+## Summary
+
+In this module, I analyzed the fundamental distinction between Windows Server Roles and Features. A Role defines the server's primary identity and business workload on the network (such as AD DS, DNS Server, or DHCP Server), whereas a Feature provides auxiliary capabilities, management utilities, or software frameworks (.NET Framework, BitLocker, RSAT). I also learned why adhering to the Principle of Least Functionality by not installing unneeded roles significantly shrinks a server's attack surface.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [Roles and Features Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#3-roles-and-features)
+- **Interview Preparation:** [Roles vs Features Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/03%20-%20Roles%20vs%20Features.md)
+- **Practical Lab:** [Lab 04 - Explore Roles and Features](../Lab-Exercise.md#practical-lab-04)
+
+---
+
+## Navigation
+
+- **Previous Module:** [02 - Server Manager](../02%20-%20Server%20Manager/README.md)
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [04 - Computer Management](../04%20-%20Computer%20Management/README.md)
+- **Corresponding Lab:** [Practical Lab 04 - Explore Roles and Features](../Lab-Exercise.md#practical-lab-04)

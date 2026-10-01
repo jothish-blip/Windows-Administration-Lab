@@ -1,5 +1,9 @@
 # Verify Connectivity
 
+[Virtualization Overview](../../README.md) | [Lab Setup Overview](README.md) | [Previous: Configure Networking](03%20-%20Configure%20Networking.md) | [Next Track: Windows Server Fundamentals](../../02%20-%20Windows%20Server%20Fundamentals/README.md)
+
+---
+
 ## Overview
 
 After creating the virtual machines and configuring the network, the final step is to verify that both systems can communicate successfully.
@@ -138,7 +142,11 @@ The Windows Server and Windows 11 virtual machines can successfully communicate 
 
 ## Navigation
 
-← Previous: [Configure Networking](03%20-%20Configure%20Networking.md)
+- **Previous:** [03 - Configure Networking](03%20-%20Configure%20Networking.md)
+- **Setup Index:** [Lab Setup Overview](README.md)
+- **Track Index:** [Virtualization Fundamentals](../../README.md)
+- **Next Track:** [Windows Server Fundamentals](../../02%20-%20Windows%20Server%20Fundamentals/README.md)
+- **First Windows Server Lab:** [Practical Lab 01: Windows Server Edition](../../02%20-%20Windows%20Server%20Fundamentals/Lab-Exercise.md#practical-lab-01--to-know-the-windows-server-edition)
 
 ---
 

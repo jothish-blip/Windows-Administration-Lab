@@ -1,4 +1,8 @@
-# Create Virtual Machines
+# Create and Configure Virtual Machines
+
+[Virtualization Overview](../../README.md) | [Lab Setup Overview](README.md) | [Previous: Install VirtualBox](01%20-%20Install%20VirtualBox.md) | [Next: Configure Networking](03%20-%20Configure%20Networking.md)
+
+---
 
 ## Overview
 
@@ -49,6 +53,8 @@ DC01 will serve as the Domain Controller for the lab. It will later host service
 | Virtual Hard Disk | 80 GB (VDI, Dynamically Allocated) |
 
 Attach the Windows Server 2022 ISO before starting the virtual machine.
+
+*(Note: Once Windows Server is installed, its edition and system parameters are verified in [Windows Server Fundamentals - Practical Lab 01](../../02%20-%20Windows%20Server%20Fundamentals/Lab-Exercise.md#practical-lab-01--to-know-the-windows-server-edition) and [Practical Lab 02](../../02%20-%20Windows%20Server%20Fundamentals/Lab-Exercise.md#practical-lab-02--to-know-detailed-information-about-the-system)).*
 
 ---
 
@@ -117,9 +123,9 @@ At the end of this guide, both virtual machines have been created with the requi
 
 ## Navigation
 
-← Previous: [Install Oracle VirtualBox](01%20-%20Install%20VirtualBox.md)
-
-→ Next: [Configure Networking](03%20-%20Configure%20Networking.md)
+- **Previous:** [01 - Install Oracle VirtualBox](01%20-%20Install%20VirtualBox.md)
+- **Setup Index:** [Lab Setup Overview](README.md)
+- **Next:** [03 - Configure Networking](03%20-%20Configure%20Networking.md)
 
 ---
 

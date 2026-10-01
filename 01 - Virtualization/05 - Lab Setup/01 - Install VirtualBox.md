@@ -1,5 +1,9 @@
 # Install Oracle VirtualBox
 
+[Virtualization Overview](../../README.md) | [Lab Setup Overview](README.md) | [Next: Create Virtual Machines](02%20-%20Create%20and%20Configure%20Virtual%20Machines.md)
+
+---
+
 ## Overview
 
 Oracle VirtualBox is a free and open-source Type 2 hypervisor developed by Oracle. It allows multiple operating systems to run simultaneously on a single physical computer by creating Virtual Machines (VMs).
@@ -95,9 +99,9 @@ Oracle VirtualBox has been successfully installed and verified. The virtualizati
 
 ## Navigation
 
-← Previous: [Lab Setup](README.md)
+← Previous: [Lab Setup Overview](README.md)
 
-→ Next: [Create Virtual Machines](02%20-%20Create%20Virtual%20Machines.md)
+→ Next: [Create and Configure Virtual Machines](02%20-%20Create%20and%20Configure%20Virtual%20Machines.md)
 
 ---
 **Last Updated:** September 2026

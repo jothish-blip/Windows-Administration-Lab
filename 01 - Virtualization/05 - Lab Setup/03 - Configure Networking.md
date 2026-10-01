@@ -1,5 +1,9 @@
 # Configure Networking
 
+[Virtualization Overview](../../README.md) | [Lab Setup Overview](README.md) | [Previous: Create VMs](02%20-%20Create%20and%20Configure%20Virtual%20Machines.md) | [Next: Verify Connectivity](04%20-%20Verify%20Connectivity.md)
+
+---
+
 ## Overview
 
 Networking is one of the most important components of this lab. Without proper network connectivity, the Windows Server and Windows 11 virtual machines cannot communicate with each other.
@@ -127,9 +131,9 @@ At the end of this guide, both virtual machines are connected to the same Intern
 
 ## Navigation
 
-← Previous: [Create and Configure Virtual Machines](02%20-%20Create%20and%20Configure%20Virtual%20Machines.md)
-
-→ Next: [Verify Connectivity](04%20-%20Verify%20Connectivity.md)
+- **Previous:** [02 - Create and Configure Virtual Machines](02%20-%20Create%20and%20Configure%20Virtual%20Machines.md)
+- **Setup Index:** [Lab Setup Overview](README.md)
+- **Next:** [04 - Verify Connectivity](04%20-%20Verify%20Connectivity.md)
 
 ---
 

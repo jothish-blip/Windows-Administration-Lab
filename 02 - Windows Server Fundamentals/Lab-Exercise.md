@@ -1,1681 +1,1520 @@
-# Practical Lab Exercises — Windows Administration Lab
+# Practical Lab Exercises - Windows Administration Lab
 
-Each practical demonstrates a particular type of knowledge that is useful for learning Windows Administration. Every practice helps strengthen our knowledge, and each exercise gives us new experience.
+[Windows Server Fundamentals Hub](README.md) | [Virtualization Fundamentals Hub](../01%20-%20Virtualization/README.md) | [Repository Overview](../README.md)
 
 ---
 
-## Practical Lab — 01: To Know the Windows Server Edition
+## Overview
 
-* To perform this lab, we are working inside the **DC01** VM.
-* To check the Windows Server edition, open **Command Prompt**, type `winver` (Windows Version), and press **Enter**.
+This document is my personal technical lab journal recording the 14 practical exercises I completed during my Windows Server administration and SOC Analyst training.
 
-### Output
+All labs were executed inside a live virtual enterprise environment consisting of:
+- **DC01:** Windows Server 2022 Standard Evaluation (Domain Controller, IP: `192.168.10.10`, Domain: `soclab.local`)
+- **CLIENT01:** Windows 10/11 Enterprise (Domain-joined client workstation, IP: `192.168.10.20`)
+- **Network:** Isolated VirtualBox Internal Network (`SOC-LAB`)
+
+Each lab documents the objective, related conceptual module, exact commands and procedures executed, verification steps, screenshot evidence, troubleshooting notes, and direct lessons learned for SOC defensive work.
+
+---
+
+## Table of Contents
+
+1. [Practical Lab 01 - To Know the Windows Server Edition](#practical-lab-01---to-know-the-windows-server-edition)
+2. [Practical Lab 02 - To Know Detailed Information About the System](#practical-lab-02---to-know-detailed-information-about-the-system)
+3. [Practical Lab 03 - Explore the Server Manager](#practical-lab-03---explore-the-server-manager)
+4. [Practical Lab 04 - Explore Roles and Features](#practical-lab-04---explore-roles-and-features)
+5. [Practical Lab 05 - Explore Computer Management](#practical-lab-05---explore-computer-management)
+6. [Practical Lab 06 - Explore and Manage Windows Services](#practical-lab-06---explore-and-manage-windows-services)
+7. [Practical Lab 07 - Manage Domain Users in Active Directory](#practical-lab-07---manage-domain-users-in-active-directory)
+8. [Practical Lab 08 - Manage Security Groups](#practical-lab-08---manage-security-groups)
+9. [Practical Lab 09 - Configure NTFS Permissions](#practical-lab-09---configure-ntfs-permissions)
+10. [Practical Lab 10 - NTFS Permission Scenarios](#practical-lab-10---ntfs-permission-scenarios)
+11. [Practical Lab 11 - Create and Access a Network Shared Folder](#practical-lab-11---create-and-access-a-network-shared-folder)
+12. [Practical Lab 12 - Share + NTFS Permission Scenarios](#practical-lab-12---share--ntfs-permission-scenarios)
+13. [Practical Lab 13 - Hidden Shares & Administrative Shares](#practical-lab-13---hidden-shares--administrative-shares)
+14. [Practical Lab 14 - Complete Access-Control Scenario](#practical-lab-14---complete-access-control-scenario)
+
+---
+
+
+<a id="practical-lab-01"></a><a id="practical-lab-01--to-know-the-windows-server-edition"></a><a id="practical-lab-01---to-know-the-windows-server-edition"></a>
+## Practical Lab 01 - To Know the Windows Server Edition
+
+* **Objective:** Verify the exact edition, build, and version of the installed Windows Server operating system on DC01.
+* **Target Machine:** `DC01` (Domain Controller)
+* **Related Concept:** [01 - Windows Server Editions](01%20-%20Windows%20Server%20Editions/README.md)
+* **Lab Baseline:** Machine provisioned in [Virtualization - Create Virtual Machines](../01%20-%20Virtualization/05%20-%20Lab%20Setup/02%20-%20Create%20and%20Configure%20Virtual%20Machines.md)
+
+---
+
+### Steps Taken
+
+1. I logged into the `DC01` virtual machine desktop.
+2. I opened **Command Prompt**.
+3. I executed `winver`:
+
+```cmd
+winver
+```
+
+### Verification & Evidence
 
 ![Windows Version](Screenshots/01%20-%20Windows%20Version.png)
 
-* Currently, we are working on **Microsoft Windows Server**.
-* The operating system is **Windows Server 2022 Standard Evaluation**.
+From the dialog output, I verified the following system parameters:
+* **Operating System:** Microsoft Windows Server
+* **Edition:** Windows Server 2022 Standard Evaluation
+* **Version:** 21H2 (OS Build 20348)
+* **Licensing State:** Time-limited evaluation build for testing and development
+
+### What This Teaches for SOC Work
+
+Verifying the exact edition and build is a fundamental step in asset inventory and vulnerability assessment. During incident response, an analyst must confirm whether a compromised system is running a supported, fully-patched build, and identify which native security capabilities and server roles the edition supports.
 
 ---
 
-## Practical Lab — 02: To Know Detailed Information About the System
+<a id="practical-lab-02"></a><a id="practical-lab-02--to-know-detailed-information-about-the-system"></a><a id="practical-lab-02---to-know-detailed-information-about-the-system"></a>
+## Practical Lab 02 - To Know Detailed Information About the System
 
-* To perform this lab, we are working on the same machine, **DC01**.
-* Open **Command Prompt** and type `systeminfo` (System Information), then press **Enter**.
+* **Objective:** Extract comprehensive operating system, kernel build, hardware architecture, RAM allocation, and domain membership details using the command line.
+* **Target Machine:** `DC01`
+* **Related Concept:** [01 - Windows Server Editions](01%20-%20Windows%20Server%20Editions/README.md)
 
-### Output
+---
 
-![Detailed Information of the System](<Screenshots/02 - System Information.png>)
+### Steps Taken
 
-Here are the key details from the `systeminfo` command output:
+1. In the Command Prompt window on `DC01`, I executed `systeminfo`:
 
+```cmd
+systeminfo
+```
+
+### Verification & Evidence
+
+![System Information Output](Screenshots/02%20-%20System%20Information.png)
+
+From the command output, I confirmed the following key details:
+* **Host Name:** `WIN-DEF8VDFQ099` (default computer name assigned during setup)
 * **OS Name:** Microsoft Windows Server 2022 Standard Evaluation
 * **OS Version:** 10.0.20348 N/A Build 20348
 * **System Type:** x64-based PC
-* **Total Physical Memory:** 4096 MB
-* **Domain:** soclab.local
+* **Total Physical Memory:** 4,096 MB (confirming the 4GB RAM allocation configured in VirtualBox)
+* **Domain:** `soclab.local`
 
---- 
+### What This Teaches for SOC Work
 
-## Practical Lab - 03: Explore the Server Manager
-
-* **Goal:** To understand Server Manager as the central Windows Server administrative interface.
-* Let's explore Server Manager. To perform this activity, we will work on the **DC01** machine.
-
-## Task - 01: Open Server Manager Dashboard
-
-### The central dashboard features a sidebar with quick navigation links, which include:
-
-![alt text](<Screenshots/31 - Server Manager Dashboard.png>)
-
-* **Dashboard:** The central overview of Server Manager.
-* **Local Server:** Provides detailed information about the local machine.
-* **AD DS:** Provides quick links to manage Active Directory Domain Services.
-* **DNS:** Used to view and manage DNS query requests.
-* **File and Storage Services:** Manages local disks, displays related events, and manages storage.
-
-#### The top menu bar provides access to major administrative functions:
-
-* **Notifications (Flag Icon):** Displays important updates and alerts from Windows Server that require administrator attention.
-* **Manage:** Used to install, remove, and manage server roles and features.
-* **Tools:** Provides access to essential Windows Server administrative utilities.
-* **View:** Allows you to adjust the zoom and resize the Server Manager window.
-
-
+1. `systeminfo` is one of the very first commands run by threat actors (and automated recon scripts like WinPEAS) following initial access to fingerprint the target OS, hotfixes applied, network cards, and domain architecture (MITRE ATT&CK T1082 - System Information Discovery).
+2. For defenders, baseline system information is essential for patch management, asset tracking, and distinguishing normal system attributes from anomalous configurations.
 
 ---
 
-## Task - 02: Explore Local Server
+<a id="practical-lab-03"></a><a id="practical-lab-03--explore-the-server-manager"></a><a id="practical-lab-03---explore-the-server-manager"></a>
+## Practical Lab 03 - Explore the Server Manager
 
-### The Local Server page provides detailed configuration information about the current machine.
+* **Objective:** Explore and document Server Manager as the centralized administrative dashboard for Windows Server.
+* **Target Machine:** `DC01`
+* **Related Concept:** [02 - Server Manager](02%20-%20Server%20Manager/README.md)
 
-![alt text](<Screenshots/32 - Server Manager - Local Server.png>)
+---
 
-#### From the Local Server properties, we can observe the following details:
-* **Computer name:** WIN-DEF8VDFQ099
-* **Domain:** soclab.local
-* **Windows Update:** Available Updates
+### Task 01 - Server Manager Dashboard
+
+I opened **Server Manager** from the Start menu / taskbar.
+
+![Server Manager Dashboard](Screenshots/31%20-%20Server%20Manager%20Dashboard.png)
+
+I inspected the key elements of the central dashboard:
+* **Navigation Pane (Left):**
+  * **Dashboard:** Central overview showing server status and deployment options.
+  * **Local Server:** Properties and settings of the current machine.
+  * **AD DS:** Active Directory Domain Services role management shortcut.
+  * **DNS:** Domain Name System role management shortcut.
+  * **File and Storage Services:** Storage pools, volumes, shares, and disk management.
+* **Top Navigation Bar:**
+  * **Notifications (Flag Icon):** Displays operational alerts and task status.
+  * **Manage:** Menu to add/remove roles and features or add remote servers to the console.
+  * **Tools:** Consolidated launcher for administrative consoles.
+  * **View:** Window layout and zoom controls.
+
+---
+
+### Task 02 - Explore Local Server Properties
+
+I clicked **Local Server** in the left navigation pane to inspect the system configuration summary:
+
+![Server Manager Local Server View](Screenshots/32%20-%20Server%20Manager%20-%20Local%20Server.png)
+
+I recorded the baseline server parameters:
+* **Computer name:** `WIN-DEF8VDFQ099`
+* **Domain:** `soclab.local`
+* **Windows Defender Firewall:** Domain: On
 * **Remote Management:** Enabled
 * **Remote Desktop:** Disabled
-* **Ethernet/network information:** 192.168.10.10, IPv6 Enabled
-* **OS version:** Microsoft Windows Server 2022 Standard Evaluation
-* **Physical memory:** 4GB
-* **Time zone:** (UTC-08:00) Pacific Time (US & Canada)
-
-
+* **NIC Configuration:** Static IP `192.168.10.10`, IPv6 Enabled
+* **Total Physical Memory:** 4.00 GB
+* **Time Zone:** Pacific Time (US & Canada)
 
 ---
 
-## Task - 03: Explore Manage
+### Task 03 - Explore the Manage Menu
 
-* Navigate to the Manage menu to understand its administrative importance.
-* Clicking the menu reveals several administrative options.
+I clicked the **Manage** menu in the top bar to inspect role and deployment options:
 
-![alt text](<Screenshots/33 - Server Manager - Manage.png>)
+![Server Manager Manage Menu](Screenshots/33%20-%20Server%20Manager%20-%20Manage.png)
 
-#### Let's review the key options provided in the Manage menu:
-* **Add Roles and Features:** Installs new roles and features onto the server.
-* **Remove Roles and Features:** Uninstalls existing roles and features.
-* **Add Servers:** Adds other remote servers to the Server Manager dashboard for centralized management.
-* **Create Server Group:** Creates custom groups of servers for easier management in the dashboard.
-
-
-
-These are the primary administrative actions available in the Manage menu.
+The menu provides four primary capabilities:
+1. **Add Roles and Features:** Launches the wizard to install server components.
+2. **Remove Roles and Features:** Launches the wizard to decommission installed components.
+3. **Add Servers:** Connects remote Windows Server instances for centralized multi-server management.
+4. **Create Server Group:** Organizes managed servers into logical collections.
 
 ---
 
-### Task - 04: Explore Tools
+### Task 04 - Explore Administrative Tools
 
-### The Tools menu provides essential Windows utilities required for efficient server administration.
+I clicked the **Tools** menu to review the installed administrative consoles:
 
-![alt text](<Screenshots/34 - Server Manager - Tools.png>)
+![Server Manager Tools Menu](Screenshots/34%20-%20Server%20Manager%20-%20Tools.png)
 
-#### Let's review some of the most important tools used in day-to-day operations:
-* **Active Directory Users and Computers:** Used to create, manage, and organize domain users and groups.
-* **Computer Management:** A consolidated console containing various system management utilities.
-* **DNS:** Manages the Domain Name System, which resolves domain names into IP addresses.
-* **Event Viewer:** Used to view and analyze system, security, and application events generated by Windows.
-* **Performance Monitor:** Analyzes and monitors system resource usage and server performance.
-* **Services:** Manages background programs (services) that perform specific functions without continuous user interaction.
-* **Task Scheduler:** Allows administrators to create and schedule automated tasks to run at specified times or upon specific triggers.
-* **Group Policy Management:** Controls and enforces configurations for users and computers within an Active Directory domain.
+Key management consoles available:
+* **Active Directory Users and Computers (`dsa.msc`):** Manage domain accounts, OUs, and security groups.
+* **Computer Management (`compmgmt.msc`):** Consolidated system management (Local Users, Event Viewer, Services, Disks).
+* **DNS Manager (`dnsmgmt.msc`):** Configure forward/reverse lookup zones and DNS records.
+* **Event Viewer (`eventvwr.msc`):** Inspect Windows Security, System, and Application logs.
+* **Services (`services.msc`):** Manage background Windows services and daemon startup states.
 
+### What This Teaches for SOC Work
 
-* While Windows provides many other administrative tools, the utilities listed above are the most critical for routine server operations.
-
---- 
-
-## Practical Lab - 04: Explore Roles and Features
-
-* **Goal:** To understand the difference between Windows Server Roles and Features, and to learn how administrators navigate the installation wizard to manage them.
-* **Machine:** For this lab, we are working on the **DC01** virtual machine.
+Server Manager provides a complete inventory of roles running on an asset. In a SOC investigation, knowing what roles a server hosts (e.g., AD DS Domain Controller vs File Server) determines the severity of security alerts and dictates which event logs (Security Event Log vs Directory Service Log) contain forensic evidence.
 
 ---
 
-### Task 01 — Open Add Roles and Features
+<a id="practical-lab-04"></a><a id="practical-lab-04--explore-roles-and-features"></a><a id="practical-lab-04---explore-roles-and-features"></a>
+## Practical Lab 04 - Explore Roles and Features
 
-* To perform this task, open **Server Manager**, click the **Manage** menu in the top right corner, and select **Add Roles and Features**.
-
-**Understanding the Wizard Navigation Pane**
-As you progress through the wizard, the left sidebar shows the different phases of the installation process:
-
-![alt text](<Screenshots/35 - Server Manager - Add Roles and Features Wizard.png>)
-
-* **Before You Begin:** A preparatory guide that explains the purpose of the wizard and verifies that fundamental administrative prerequisites (like strong passwords and static IPs) are met.
-* **Installation Type:** Allows you to select the deployment method.
-* **Server Selection:** Allows you to choose which server to target for the installation.
-* **Server Roles:** The menu to select the primary jobs/functions the server will perform.
-* **Features:** The menu to select additional, supporting capabilities.
-* **Confirmation:** A final review screen showing exactly what will be installed before committing the changes.
+* **Objective:** Walk through the complete Add Roles and Features Wizard, analyze role dependencies, and examine the installation of Active Directory Domain Services and DNS.
+* **Target Machine:** `DC01`
+* **Related Concept:** [03 - Roles vs Features](03%20-%20Roles%20vs%20Features/README.md)
 
 ---
 
-### Task 02 — Explore Installation Type
+### Task 01 - Launch Add Roles and Features Wizard
 
-Let's take a closer look at the Installation Type screen. Windows primarily provides two types of installations. By default, they are:
+From Server Manager, I clicked **Manage -> Add Roles and Features**.
 
-![alt text](<Screenshots/36 - Servere Manager - Select Installtion Type.png>)
+![Add Roles and Features Wizard](Screenshots/35%20-%20Server%20Manager%20-%20Add%20Roles%20and%20Features%20Wizard.png)
 
-**1. Role-based or feature-based installation:**
-This is the standard installation method. It is used to configure a single server by adding specific roles, role services, and features to it. You will use this option for almost all standard server configurations.
-
-**2. Remote Desktop Services installation:**
-This is a specialized, automated installation method used specifically to deploy the infrastructure required for Virtual Desktop Infrastructure (VDI) or session-based remote desktop deployments across multiple servers.
-
----
-
-### Task 03 — Explore Server Selection
-
-Let's examine the Server Selection screen. *(Note: In this activity, we are only exploring and understanding what each screen does; we will not actually install anything).*
-
-Windows provides two options to target a server for installation:
-
-![alt text](<Screenshots/37 - Server Manager - Selection Destination Server.png>)
-
-**1. Select a server from the server pool:**
-This allows the administrator to choose a server from the list of servers currently managed by Server Manager. This can be the local server you are currently logged into (e.g., DC01) or a remote server on the network.
-
-**2. Select a virtual hard disk:**
-This allows administrators to install roles and features offline directly into a Virtual Hard Disk (.vhd or .vhdx) file that is not currently running. This is highly useful for preparing virtual machine templates before they are booted up.
+The navigation sidebar outlines the installation process:
+* **Before You Begin:** Verifies administrative prerequisites (strong passwords, static IP addresses, Windows updates).
+* **Installation Type:** Selects the deployment model.
+* **Server Selection:** Targets the destination server.
+* **Server Roles:** Selects major server roles.
+* **Features:** Selects supporting software components.
+* **Confirmation:** Final review before installation.
 
 ---
 
-### Task 04 — Explore Server Roles
+### Task 02 - Select Installation Type
 
-Windows Server includes a large number of roles. Administrators must select and install roles based on the organization's specific operational needs. The wizard allows you to select one or more server roles to install simultaneously.
+I clicked **Next** to proceed to the Installation Type screen:
 
-Here is a look at some of the most critical Server Roles available in this list:
+![Select Installation Type](Screenshots/36%20-%20Server%20Manager%20-%20Select%20Installation%20Type.png)
 
-![alt text](<Screenshots/38 - Select Server Roles.png>)
-
-* **DHCP Server:** Automatically provides network configuration (such as IP addresses, subnet masks, and default gateways) to client machines on the network.
-* **Active Directory Domain Services (AD DS):** Provides centralized identity management and directory services, allowing administrators to create and manage users, computers, and security groups.
-* **DNS Server:** Provides name resolution services, converting human-readable domain names into IP addresses.
-* **File and Storage Services:** Provides technologies for managing storage, file shares, and network file access.
-* **Web Server (IIS):** Microsoft's web server role, used to host websites, web applications, and web services.
+I examined the two installation types:
+1. **Role-based or feature-based installation:** Configures a single server by adding roles, role services, and features. This is the standard method for general server configuration.
+2. **Remote Desktop Services installation:** Deploys Virtual Desktop Infrastructure (VDI) or session-based remote desktop components across multiple servers.
 
 ---
 
-### Task 05 — Explore Features
+### Task 03 - Select Destination Server
 
-Proceed to the Features screen. Here, administrators can select one or more additional capabilities to install.
+I proceeded to the Server Selection screen:
 
-Microsoft deliberately separates Roles (the primary functions of the server) from Features (the supporting software components) for better logical organization and resource utilization. Features provide additional capabilities to the Windows OS or support specific roles.
+![Select Destination Server](Screenshots/37%20-%20Server%20Manager%20-%20Selection%20Destination%20Server.png)
 
-Here are some common Features you will see in this list:
-
-![alt text](<Screenshots/39 - Select Features.png>)
-
-* **.NET Framework:** A software development framework built into Windows, required to run many Windows-based applications, management tools, and PowerShell scripts.
-* **BitLocker Drive Encryption:** A Windows security feature that provides full-disk encryption to protect data at rest on the server's hard drives.
-* **Telnet Client:** A command-line utility used to communicate with remote devices over the Telnet protocol. While insecure for general management, administrators often use it temporarily to test network port connectivity.
-* **Failover Clustering:** A high-availability feature that allows multiple servers (nodes) to work together. If one server fails, another takes over its workload to provide continuous availability for services like databases or file shares.
+Windows provides two targeting options:
+1. **Select a server from the server pool:** Chooses a server currently managed by Server Manager (local machine `WIN-DEF8VDFQ099` at `192.168.10.10` or a remote server).
+2. **Select a virtual hard disk:** Installs roles and features offline directly into a `.vhd` or `.vhdx` file without running the VM.
 
 ---
 
-## Practical Lab 05 — Explore Computer Management
+### Task 04 - Inspect Server Roles
 
-* **Goal:** To understand **Computer Management** as a centralized Windows administration and troubleshooting console.
-* **Machine:** For this lab, we are working on the **DC01** virtual machine.
+On the **Server Roles** page, I reviewed the roles available in Windows Server:
 
----
+![Select Server Roles](Screenshots/38%20-%20Select%20Server%20Roles.png)
 
-### Task 01 — Open Computer Management
-
-There are two primary methods to open Computer Management:
-
-* **Method 1 (GUI):** Open Server Manager → Click **Tools** in the top right corner → Select **Computer Management**.
-* **Method 2 (CLI):** Press **Windows + R**, type `compmgmt.msc`, and press **Enter**.
-
-We are opening it using the first option. Once Computer Management opens in a new window, you will observe the console is divided into three major categories:
-
-![alt text](<Screenshots/40 - Computer Management - Task -1.png>)
-
-* **System Tools:** Used to manage system utilities, analyze events, and monitor hardware or user performance.
-* **Storage:** Provides access to Disk Management to create, manage, and format disk partitions.
-* **Services and Applications:** Manages the background services required to run Windows and supporting applications.
+Key roles examined:
+* **Active Directory Domain Services (AD DS):** Centralized identity management and authentication for users, computers, and groups.
+* **DNS Server:** Name resolution services, translating domain names to IP addresses.
+* **File and Storage Services:** Technologies for managing storage volumes, quotas, and SMB file shares.
+* **DHCP Server:** Dynamic IP address assignment and network configuration for client workstations.
+* **Web Server (IIS):** Microsoft's web application and HTTP hosting platform.
 
 ---
 
-### Task 02 — Explore System Tools
+### Task 05 - Inspect Features
 
-Expanding the **System Tools** node reveals several critical Windows utilities. The list of utilities includes:
+I proceeded to the **Features** selection screen:
 
-![alt text](<Screenshots/41 - System Tools.png>)
+![Select Features](Screenshots/39%20-%20Select%20Features.png)
 
-* **Task Scheduler:** Allows administrators to create automated tasks and assign a specific time or trigger for them to run. This is a major feature for efficient Windows administration.
-* **Event Viewer:** Used to view and analyze events that have occurred on the computer. It centralizes logs from all over the system and is crucial for investigating errors and security alerts.
-* **Shared Folders:** A section that lets administrators see and manage the folders currently being shared over the network.
-* **Device Manager:** Used to view and manage the hardware resources attached to the computer. It helps administrators check driver status and troubleshoot hardware performance.
+Key features examined:
+* **.NET Framework:** Application framework required by Windows software, management tools, and PowerShell modules.
+* **BitLocker Drive Encryption:** Full-disk encryption protecting data at rest on server storage volumes.
+* **Failover Clustering:** High-availability clustering allowing secondary nodes to take over workloads if the primary node fails.
+* **Telnet Client:** Legacy command-line utility used for testing network port connectivity.
 
----
+### What This Teaches for SOC Work
 
-### Task 03 — Explore Event Viewer
+1. **Attack Surface Reduction:** Installing unnecessary roles or features increases the server attack surface. Every role introduces background services, listening network ports, and potential vulnerability vectors. Enterprise servers should strictly adhere to least functionality.
+2. **Detection of Unauthorized Role Installation:** Installing roles like AD CS (Active Directory Certificate Services) or Hyper-V can indicate attacker persistence or domain escalation (e.g., AD CS abuse / ESC1-ESC8). Monitoring Event ID **4624** (Logon) followed by Event ID **7045** (New Service Installed) or CBS component installation logs in `C:\Windows\Logs\CBS\CBS.log` allows SOC analysts to detect rogue role additions.
 
-Let's take a deeper look into Event Viewer, which is primarily used to check the system and application logs generated by Windows.
 
-Expanding **Windows Logs**, you will find several different categories of events:
+<a id="practical-lab-05"></a><a id="practical-lab-05--explore-computer-management"></a><a id="practical-lab-05---explore-computer-management"></a>
+## Practical Lab 05 - Explore Computer Management
 
-![alt text](<Screenshots/42 - Event Viewer.png>)
-
-* **Application:** Contains events logged by software or applications running on the system (e.g., an application crash or a database startup).
-* **Security:** Contains events related to security policies, resource access, and user logons. This is the primary log used for auditing and SOC investigations.
-* **Setup:** Contains events related to the installation and configuration of the Windows operating system, roles, or updates.
-* **System:** Contains events logged by underlying Windows operating system components, such as driver failures or service state changes.
-* **Forwarded Events:** Contains events that have been collected and forwarded from other computers on the network via Windows Event Forwarding.
+* **Objective:** Explore Computer Management as the centralized administration console for Windows system tools, storage, and service management.
+* **Target Machine:** `DC01`
+* **Related Concept:** [04 - Computer Management](04%20-%20Computer%20Management/README.md)
 
 ---
 
-### Task 04 — Explore Shared Folders
+### Task 01 - Launch Computer Management
 
-The **Shared Folders** utility provides real-time information about the files and folders this server is sharing over the network.
+I opened Computer Management using the administrative console launcher:
+1. In Server Manager, I clicked **Tools -> Computer Management** (or executed `compmgmt.msc` from Run).
+2. I inspected the three primary branches in the console tree:
+   * **System Tools:** Utilities for task automation, log analysis, shared folder management, and hardware inspection.
+   * **Storage:** Disk partitioning, volume formatting, and filesystem health.
+   * **Services and Applications:** Background service control and WMI management.
 
-There are three main views within Shared Folders:
-
-![alt text](<Screenshots/43 - Shared Folders.png>)
-
-* **Shares:** Displays the actual folders/resources currently being shared by the server.
-* **Sessions:** Displays the active network connections (which users or computers are currently connected to the server).
-* **Open Files:** Displays the specific files that are currently locked or opened by users across the network.
-
----
-
-### Task 05 — Explore Device Manager
-
-**Device Manager** displays a categorized list of all hardware items recognized by Windows and provides detailed status information and driver management for each.
-
-Because we are working inside the **DC01** virtual machine, the items recognized by Windows are *virtualized hardware* presented by the hypervisor (e.g., VirtualBox).
-
-![alt text](<Screenshots/44 - Device Manager.png>)
-
-The items listed—including the display adapters, keyboard, mouse, are virtual representations of physical hardware.
+![Computer Management Console](Screenshots/40%20-%20Computer%20Management%20-%20Task%20-1.png)
 
 ---
 
-### Task 06 — Explore Disk Management
+### Task 02 - Explore System Tools
 
-Navigating to **Storage → Disk Management** allows administrators to view, create, manage, and delete Windows disk partitions.
+I expanded the **System Tools** container:
 
-Currently, our system resources show the following configuration:
+![System Tools Node](Screenshots/41%20-%20System%20Tools.png)
 
-![alt text](<Screenshots/45 - Disk Management.png>)
-
-* **Total Storage:** 80 GB
-* **System Reserved:** 100 MB (Used by Windows for boot configuration)
-* **C: Drive (Boot Volume):** ~79.90 GB
-* **Free Space:** ~69.07 GB available on the C: drive.
-
-Observations from the console:
-
-* There is only **one physical/virtual disk** (Disk 0) presented to Windows.
-* The disk is fully partitioned into volumes (the System Reserved partition and the primary C: Drive).
-* There is currently **no unallocated space** left on the system storage.
+Key utilities evaluated:
+* **Task Scheduler:** Schedules automated scripts, routine backups, and maintenance triggers.
+* **Event Viewer:** Centralized operating system and security event logging engine.
+* **Shared Folders:** Real-time visibility into active SMB network shares, user sessions, and open file handles.
+* **Device Manager:** Virtualized hardware inventory and device driver configuration.
 
 ---
 
-### Task 07 — Explore Services
+### Task 03 - Explore Event Viewer
 
-**Services** are background programs that provide core functions to Windows and applications without requiring human interaction.
+I expanded **System Tools -> Event Viewer -> Windows Logs** to examine event categories:
 
-Navigate to **Services and Applications** and click **Services**. To understand how Windows manages these background processes, observe the columns provided for each service:
+![Event Viewer Windows Logs](Screenshots/42%20-%20Event%20Viewer.png)
 
-![alt text](<Screenshots/46 - Services.png>)
-
-* **Service Name:** The official system identifier for the background service.
-* **Description:** A brief explanation of what the service actually does and its purpose within the operating system.
-* **Startup Type:** The configuration rule that determines how the service is launched (e.g., *Automatic* for booting with Windows, *Manual* for starting only when requested, or *Disabled* to prevent it from running).
-* **Status:** The current, real-time operational state of the service (e.g., *Running* or blank if it is *Stopped*).
-* **Log On As:** The specific user account or system identity (such as Local System, Network Service, or a custom service account) that the service uses to authenticate and execute its tasks.
-
----
-## Practical Lab 06 — Explore and Manage Windows Services
-
-* **Goal:** To understand how Windows services operate and how administrators manage their real-time state and startup behavior.
-* **Machine:** For this lab, we are working on the **DC01** virtual machine.
+Core log files evaluated:
+* **Application:** Events generated by installed applications and third-party software.
+* **Security:** Audit records documenting successful and failed logon attempts, privilege escalation, object access, and account management.
+* **Setup:** Records relating to operating system updates and role provisioning.
+* **System:** Operating system kernel, driver, and system service state changes.
+* **Forwarded Events:** Events collected from remote hosts via Windows Event Forwarding (WEF).
 
 ---
 
-### Task 01 — Open Services
+### Task 04 - Explore Shared Folders Management
 
-Services provide background functions required to run Windows and its applications without human interaction.
+I expanded **System Tools -> Shared Folders** to view current file sharing state:
 
-There are two primary ways to open the Services console:
+![Shared Folders Node](Screenshots/43%20-%20Shared%20Folders.png)
 
-* **Method 1 (GUI):** Open Server Manager → Click **Tools** → Select **Services**.
-* **Method 2 (CLI):** Press **Windows + R**, type `services.msc`, and press **Enter**.
-
-We will select the first option to open the Services console.
-
-Currently, we are exploring the **Services (Local)** console. This view displays all background services registered on the local machine (DC01).
-
-**Important Services Typically Observed:**
-When scrolling through the list of local services on a Domain Controller, administrators monitor several critical services to ensure system and network health:
-
-![alt text](<Screenshots/46 - Services.png>)
-
-* **Active Directory Domain Services (NTDS):** The core service responsible for directory management, identity verification, and domain authentication. If this stops, users cannot log in.
-* **DNS Server:** Resolves domain names to IP addresses. Active Directory relies entirely on this service to function.
-* **Windows Update:** Manages the download and installation of critical security patches and OS updates.
-* **Windows Defender Antivirus Service:** Provides continuous, real-time protection against malware and system threats.
-* **Remote Procedure Call (RPC):** A foundational communication service. Because many other Windows services depend on RPC, stopping it will cause widespread system failure.
-* **DHCP Client:** Registers and updates the IP addresses and DNS records for the computer itself on the network.
+Three operational views examined:
+* **Shares:** All currently exposed SMB shares on the server (e.g., `C$`, `ADMIN$`, `IPC$`, `SYSVOL`, `NETLOGON`).
+* **Sessions:** Active remote connections showing client IP addresses, username, and connection duration.
+* **Open Files:** Live file locks held by remote users over the network.
 
 ---
 
-### Task 02 — Select a Safe Service
+### Task 05 - Explore Device Manager
 
-To practice interacting with services safely, we must select a non-critical service. In this lab, we will use the **Print Spooler** service.
+I opened **Device Manager** to inspect the virtualized hardware layer:
 
-**Administrative Warning:** You should never randomly stop or disable services that provide critical infrastructure tasks to the Windows OS or the network. Examples of critical services to leave alone on DC01 include:
+![Device Manager Virtualized Hardware](Screenshots/44%20-%20Device%20Manager.png)
 
-* Active Directory Domain Services
-* DNS Server
-* Networking & DHCP services
-* Security / Windows Defender services
-* Core Domain Operations
+Because DC01 runs inside VirtualBox, the devices listed (storage controllers, network adapters, display adapters) represent virtualized hardware passed through by the Type-2 hypervisor.
 
 ---
 
-### Task 03 — Observe Service Information
+### Task 06 - Explore Disk Management
 
-Locate the **Print Spooler** service in the list. By looking at its properties and columns, we can observe the following detailed information:
+I navigated to **Storage -> Disk Management** to inspect the server's partition scheme:
 
-![alt text](<Screenshots/47 - Print Spooler Properties.png>)
+![Disk Management Partition Layout](Screenshots/45%20-%20Disk%20Management.png)
 
-* **Service Name:** Spooler (The internal system name)
-* **Display Name:** Print Spooler (The human-readable name shown in the console)
-* **Description:** Manages all local and network print queues and controls all printing jobs. If this service is stopped, you will be unable to print or discover printers.
-* **Startup Type:** Automatic
-* **Status:** Running
-* **Log On As:** Local System (The built-in system account the service uses to execute)
-
----
-
-### Task 04 — Understand Service State
-
-To observe the real-time Service State, look at the **Status** field for the Print Spooler.
-
-* The current status indicates the service is **Running**.
-* This means the background process is actively executing and working properly at this exact moment.
+I recorded the disk geometry:
+* **Disk 0:** Basic virtual disk initialized with 80 GB total capacity.
+* **System Reserved:** 100 MB partition holding the Boot Configuration Data (BCD).
+* **C: Partition:** ~79.90 GB NTFS partition containing the Windows operating system and user directories.
+* **Unallocated Space:** 0 MB (all allocated).
 
 ---
 
-### Task 05 — Understand Startup Type
+### Task 07 - Inspect Registered Services
 
-To observe how Windows handles this service upon booting, look at the **Startup Type** field.
+I navigated to **Services and Applications -> Services** to review the background services registered on DC01:
 
-* The field indicates it is configured as **Automatic**.
-* This means that whenever Windows boots up, the operating system will automatically start this service in the background without requiring any manual intervention from an administrator.
+![Services List in Computer Management](Screenshots/46%20-%20Services.png)
 
----
+Key columns analyzed:
+* **Service Name:** Internal system identifier.
+* **Description:** Functional description of the service's purpose.
+* **Startup Type:** Boot configuration (Automatic, Manual, Disabled).
+* **Status:** Live execution state (Running or Stopped).
+* **Log On As:** Security principal used to execute the service process (e.g., `Local System`, `Network Service`).
 
-### Task 06 — Controlled Start/Stop Test
+### What This Teaches for SOC Work
 
-To observe the service lifecycle, we will test it manually.
-
-* **Step 1 (Stop the service):** Right-click Print Spooler and select **Stop**. The Status field clears (becomes blank/stopped). The service is no longer actively running in the background.
-* **Step 2 (Start the service):** Right-click Print Spooler and select **Start**. The Status field changes back to **Running**.
-
-**Key Observations from this test:**
-
-* Manually stopping a service changes its real-time *Status*, but it does not overwrite its configured *Startup Type* (it remains Automatic for the next reboot).
-* Because Print Spooler is not a critical dependency for core OS functions, stopping it did not interrupt the rest of the server.
-* When started again, the status returned to normal, indicating the service is healthy.
+Computer Management consolidates the primary tools needed for host-level forensic analysis and triage. In incident response, an analyst examines Task Scheduler for persistence mechanisms (MITRE ATT&CK T1053.005), inspects Shared Folders for active SMB exfiltration sessions, and monitors Services for rogue daemon installation (MITRE ATT&CK T1543.003).
 
 ---
 
-### Task 07 — Explore Dependencies
+<a id="practical-lab-06"></a><a id="practical-lab-06--explore-and-manage-windows-services"></a><a id="practical-lab-06---explore-and-manage-windows-services"></a>
+## Practical Lab 06 - Explore and Manage Windows Services
 
-Before stopping any service in a production environment, an administrator must check its dependencies, as stopping one service can severely interrupt others that rely on it.
-
-Right-click the Print Spooler service, select **Properties**, and navigate to the **Dependencies** tab. From here, we can observe the system components that the Spooler depends on to function:
-
-![alt text](<Screenshots/48 - Dependencies of PS.png>)
-
-* **HTTP Service:** Required to send and receive requests over the network for web-based printing and server communication.
-* **Remote Procedure Call (RPC):** A foundational Windows protocol that allows a program to request a service from a program located on another computer in a network. It handles the underlying inter-process communication required for the spooler to accept print jobs.
-
-Because the Print Spooler depends on HTTP and RPC, if either of those foundational services were to fail, the Print Spooler would also fail.
-
---- 
-
-## Practical Lab 07 — Manage Domain Users in Active Directory
-
-* **Goal:** To create, explore, and manage domain user accounts using the Active Directory Users and Computers console.
-* **Machine:** For this lab, we are working on the **DC01** virtual machine.
-* **Domain:** soclab.local
+* **Objective:** Understand how Windows services operate, inspect service properties and dependencies, and perform controlled start/stop tests on a non-critical service.
+* **Target Machine:** `DC01`
+* **Related Concept:** [05 - Windows Services](05%20-%20Windows%20Services/README.md)
 
 ---
 
-### Task 01 — Open Active Directory Users and Computers
+### Task 01 - Launch Services Console
 
-There are multiple ways to open the Active Directory Users and Computers (ADUC) console:
+I opened the Services console using `services.msc` from Run (or via Server Manager -> Tools -> Services).
 
-1. **Method 1 (GUI):** Open Server Manager → Click **Tools** → Select **Active Directory Users and Computers**.
-2. **Method 2 (CLI):** Press **Windows + R**, type `dsa.msc`, and press **Enter**.
+![Services Console](Screenshots/46%20-%20Services.png)
 
-We will choose the first option to open the ADUC console. Once opened, the left navigation pane primarily displays two root items:
-
-![alt text](<Screenshots/49 - ADUC.png>)
-
-* **Saved Queries:** A feature that allows administrators to create and save custom LDAP search queries to quickly find specific users, computers, or groups based on criteria (e.g., "All locked out accounts").
-* **soclab.local:** The root of our Active Directory domain, used to manage all users, computers, groups, and organizational units within the network.
-
----
-
-### Task 02 — Explore the Domain
-
-Expand the **soclab.local** domain node. From here, we can observe several default containers and Organizational Units (OUs):
-
-![alt text](<Screenshots/50  - Soclab.local.png>)
-
-* **Builtin:** Contains default, built-in security groups that are created automatically when AD is installed (e.g., Administrators, Backup Operators).
-* **Computers:** The default container where new computer accounts are placed when they are joined to the domain.
-* **Domain Controllers:** A default Organizational Unit specifically meant to hold the computer accounts for the domain controllers in the network.
-* **ForeignSecurityPrincipals:** A container used to store security identifiers (SIDs) from external, trusted domains so they can be granted permissions in this domain.
-* **Managed Service Accounts:** A container used to store special service accounts that allow Active Directory to automatically manage and rotate their passwords.
-* **SOC:** A custom Organizational Unit (OU) we explicitly created for this lab environment to organize our security operations staff.
-* **Users:** The default container that holds standard built-in accounts (like the default Administrator) and fundamental domain groups (like Domain Admins and Domain Users).
-
-We will focus our work inside the custom **SOC** OU.
+I identified critical infrastructure services running on this domain controller:
+* `NTDS` (Active Directory Domain Services)
+* `DNS` (DNS Server)
+* `wuauserv` (Windows Update)
+* `WinDefend` (Microsoft Defender Antivirus Service)
+* `RpcSs` (Remote Procedure Call)
 
 ---
 
-### Task 03 — Explore Existing Users
+### Task 02 - Select a Non-Critical Service for Testing
 
-Navigate inside the **SOC** OU. Here we can observe the existing users and groups we created previously:
-
-![alt text](<Screenshots/51 - Soc users.png>)
-
-* **Users:** SOC Analyst1, SOC Analyst2, and SOC Manager1
-* **Groups:** SOC-Analysts and SOC-Managers
-
-Let's inspect the properties of **SOC Analyst1**. Right-click the user and select **Properties**. We can observe the following critical tabs:
-
-* **General:** Displays basic contact information, including the user's first name, last name, display name, email, and telephone number.
-* **Account:** Displays the User Logon Name (UPN), the pre-Windows 2000 logon name (sAMAccountName), the domain (`soclab.local`), and specific account security options (e.g., "Password never expires" or "Account is disabled").
-* **Profile:** Used to configure a centralized user profile path, assign automated logon scripts, or map a personal home folder to a network drive.
-* **Member Of:** Lists all the security groups the user belongs to. For example, it shows membership in the default `Domain Users` group and our custom `SOC-Analysts` group.
-* **Organization:** Stores corporate hierarchy information such as the user's Job Title, Department, Company, and who their direct Manager is.
+To avoid destabilizing the domain controller, I selected the **Print Spooler** (`Spooler`) service for live testing. Critical services (NTDS, DNS, RpcSs) must never be stopped during normal operations.
 
 ---
 
-### Task 04 — Create a Test User
+### Task 03 - Inspect Print Spooler Properties
 
-Let's create a dedicated test account (Test Analyst) and place it inside the SOC OU.
+I double-clicked **Print Spooler** to open its properties dialog:
 
-**Steps to create the user:**
+![Print Spooler Properties](Screenshots/47%20-%20Print%20Spooler%20Properties.png)
 
-1. Right-click the **SOC** OU in the left pane (or empty space in the right pane).
-2. Hover over **New**, and click **User**.
-3. The *New Object - User* wizard appears. Enter the **First name** (Test) and **Last name** (Analyst).
-4. Enter the **User logon name** (e.g., `test.analyst`), which will append to the `@soclab.local` domain. Click **Next**.
-5. Provide the strong lab password.
-6. You will see password configuration options. Typically, an administrator leaves "User must change password at next logon" checked for new employees, but for a lab test, you can configure it as needed.
-7. Click **Next**, review the summary, and click **Finish**. The user is now created:
-
-![alt text](<Screenshots/52 - SOC test .png>)
+I recorded the following service attributes:
+* **Service name:** `Spooler`
+* **Display name:** `Print Spooler`
+* **Path to executable:** `C:\Windows\System32\spoolsv.exe`
+* **Startup type:** `Automatic`
+* **Service status:** `Running`
+* **Log on as:** `Local System`
 
 ---
 
-### Task 05 — Explore User Account Properties
+### Task 04 - Perform Controlled Start/Stop Operations
 
-Right-click the newly created **Test Analyst** account and select **Properties**. Confirm that the configuration matches what was set during creation. You will find:
-
-* **User logon name:** Located in the *Account* tab.
-* **Account status:** Located in the *Account* tab under Account options (verifying it is not locked or disabled).
-* **Group membership:** Located in the *Member Of* tab (by default, it will only have Domain Users).
-* **Account expiration:** Located at the bottom of the *Account* tab (by default set to 'Never').
+I tested manual state management:
+1. I clicked **Stop**. The service status changed to stopped (blank).
+2. I confirmed that stopping the service did not alter its configured `Automatic` startup type; it simply terminated the running `spoolsv.exe` process.
+3. I clicked **Start**. The service status returned to `Running`.
 
 ---
 
-### Task 06 — Disable and Enable the Test Account
+### Task 05 - Analyze Service Dependencies
 
-Account state management is a routine administrative task. We will test the lifecycle of disabling an account.
+I navigated to the **Dependencies** tab of Print Spooler to evaluate cascade failure risk:
 
-**The Lifecycle:**
-`Enabled → Right-click & Disable → Disabled (Arrow pointing down on icon)` 
+![Print Spooler Dependencies](Screenshots/48%20-%20Dependencies%20of%20PS.png)
 
-![alt text](<Screenshots/53 - Disabled.png>)
+I observed that Print Spooler depends on two foundational components:
+1. **HTTP Service (`HTTP`):** Handles web-based printing and print server network calls.
+2. **Remote Procedure Call (`RpcSs`):** Core inter-process communication protocol.
 
-`→ Right-click & Enable → Enabled`
+If either `HTTP` or `RpcSs` fails or is stopped, Print Spooler immediately fails as well.
 
-![alt text](<Screenshots/54- Enabled.png>)
+### What This Teaches for SOC Work
 
-**Why Administrators Disable Instead of Delete:**
-Administrators rarely delete accounts immediately when an employee leaves. They *disable* them instead.
-
-1. **Security Containment:** Disabling instantly cuts off access during a security incident without destroying evidence.
-2. **Audit Trails & Retention:** Deleted accounts lose their Security Identifier (SID). If deleted, it becomes difficult to audit which specific user previously created a file or generated an event log.
-3. **Temporary Leaves:** An employee might be on a temporary leave of absence.
-4. **Orphaned Data:** Disabling gives the IT team time to transfer the user's emails, OneDrive data, and shared files to a manager before the account is permanently purged.
+1. **Service-Based Persistence & Privilege Escalation:** Attackers frequently create malicious services (e.g., PsExec creating `PSEXESVC`, Metasploit payloads) or modify existing service binary paths (ImageHijack / ImagePath manipulation) to execute arbitrary commands under `NT AUTHORITY\SYSTEM`.
+2. **Service Hunting:** SOC analysts use `Get-Service`, `sc query`, and Sysmon Event ID **1** (Process Creation) + Windows Security Event ID **7045** (A new service was installed in the system) to detect persistence.
+3. **Print Spooler Risk:** Print Spooler has historically suffered critical vulnerabilities (e.g., PrintNightmare - CVE-2021-34527). On domain controllers that do not handle printing, security hardening standards require disabling Print Spooler entirely.
 
 ---
 
-### Task 07 — Reset the Test User's Password
+<a id="practical-lab-07"></a><a id="practical-lab-07--manage-domain-users-in-active-directory"></a><a id="practical-lab-07---manage-domain-users-in-active-directory"></a>
+## Practical Lab 07 - Manage Domain Users in Active Directory
 
-Users frequently forget their passwords. Instead of recreating the account, administrators perform a password reset.
-
-**Steps to Reset the Password:**
-
-1. Right-click the **Test Analyst** account inside the SOC OU.
-2. Select **Reset Password...** from the context menu.
-3. The Password Reset dialog box appears. Enter the new strong password and confirm it.
-4. **Important Option:** By default, "User must change password at next logon" is checked. This ensures that the administrator does not know the user's permanent password. The user uses the temporary password to log in and is immediately forced to create a new, private one.
-5. **Unlock Option:** If the user locked themselves out by guessing their password incorrectly too many times, there is a checkbox here to "Unlock the user's account" simultaneously.
-6. Click **OK**. Windows will confirm the password has been reset:
-
-![alt text](<Screenshots/55-  Password Reset.png>)
+* **Objective:** Create, configure, manage, and verify domain user accounts in Active Directory Domain Services using the Active Directory Users and Computers (ADUC) console.
+* **Target Machine:** `DC01`
+* **Related Concept:** [06 - Local Users and Groups](06%20-%20Local%20Users%20and%20Groups/README.md)
+* **Domain:** `soclab.local`
 
 ---
 
-### Task 08 — Verify the User
+### Task 01 - Launch Active Directory Users and Computers
 
-Finally, confirm the organizational structure of the domain to ensure the user exists in the correct location.
+I opened **Active Directory Users and Computers** (`dsa.msc`) from Server Manager -> Tools.
 
-Looking at the Active Directory tree structure, it should reflect the following hierarchy:
+![Active Directory Users and Computers Console](Screenshots/49%20-%20ADUC.png)
+
+---
+
+### Task 02 - Explore the Domain Structure & SOC Organizational Unit
+
+I expanded `soclab.local` in the left pane to view the directory tree:
+
+![Domain Tree soclab.local](Screenshots/50%20%20-%20Soclab.local.png)
+
+I located the dedicated **SOC** Organizational Unit (OU) created to house departmental users and groups:
 
 ```text
 soclab.local
- └── SOC
-     ├── SOC Analyst1
-     ├── SOC Analyst2
-     ├── SOC Manager1
-     └── Test Analyst
-
+`-- SOC
+    |-- Users
+    `-- Groups
 ```
 
-The visual hierarchy and layout should look exactly like this:
-
-![alt text](<Screenshots/52 - SOC test .png>)
-
-**Key visual confirmations from this layout:**
-
-* **The Root:** The domain is `soclab.local`.
-* **The Container:** The custom `SOC` Organizational Unit (OU) branches directly off the root domain.
-* **The Object:** The new `Test Analyst` user account is successfully housed inside the `SOC` OU alongside the other analysts and groups, proving it was created in the correct directory path.
+![SOC Organizational Unit Contents](Screenshots/51%20-%20Soc%20users.png)
 
 ---
 
-## Practical Lab 08 — Manage Security Groups
+### Task 03 - Create a New Domain User Account
 
-* **Goal:** To understand and manage security groups in Active Directory, and to learn how to use groups to organize users for efficient access control.
-* **Machine:** For this lab, we are working on the **DC01** virtual machine.
-* **Domain:** soclab.local
+Inside the `SOC` OU, I created a new testing account:
+1. I right-clicked the empty space inside the `SOC` OU and selected **New -> User**.
+2. I entered the account metadata:
+   * **First name:** `Test`
+   * **Last name:** `Analyst`
+   * **User logon name:** `test.analyst@soclab.local`
+3. I assigned a complex password and completed the wizard.
 
----
-
-### Task 01 — Open Active Directory Users and Computers
-
-* To complete this task, we will use the Active Directory Users and Computers (ADUC) console.
-* To open the tool, follow the steps established in Practical Lab 07 (navigate to **Server Manager → Tools → Active Directory Users and Computers**, or press **Win + R** and type `dsa.msc`).
-
-![alt text](<Screenshots/50  - Soclab.local.png>)
-
-* Expand the `soclab.local` domain and navigate to the custom **SOC** Organizational Unit (OU).
-
+![Test Analyst User Created](Screenshots/52%20-%20SOC%20test%20.png)
 
 ---
 
-### Task 02 — Explore Existing Groups
+### Task 04 - Test Account Lifecycle: Disable and Enable Account
 
-Within the SOC OU, we already have two existing groups created for the lab:
+To practice security containment, I tested the disable/enable workflow:
+1. I right-clicked `Test Analyst` and selected **Disable Account**.
+2. A downward-pointing black arrow appeared over the account icon, confirming disabled state.
 
-* **SOC-Analysts**
-* **SOC-Managers**
+![Account Disabled with Downward Arrow](Screenshots/53%20-%20Disabled.png)
 
-Let's explore the properties of the **SOC-Analysts** group to understand the components it is built upon. Right-click the group and select **Properties**. You will observe the following critical tabs:
+3. I right-clicked the account and selected **Enable Account**.
+4. Windows confirmed the account was re-enabled, and the downward arrow disappeared.
 
+![Account Re-Enabled](Screenshots/54-%20Enabled.png)
 
-
-* **General:** Provides the Group name, description, e-mail, Group scope (e.g., Global, Domain Local, Universal), and Group type (Security or Distribution).
-* **Members:** Lists the specific user accounts that have joined this group. Currently, we have `SOC Analyst1` and `SOC Analyst2`.
-* **Member Of:** Displays other groups that *this* group is a member of. This is used for "Group Nesting" (e.g., placing the SOC-Analysts group inside a broader "All IT Staff" group).
-* **Managed By:** Specifies a particular user or group that has the administrative authority to manage this group's membership. This is highly useful for delegating administrative tasks (e.g., letting the SOC Manager add/remove users without giving them full Domain Admin rights).
-
----
-
-### Task 03 — Check Existing Group Membership
-
-In this task, we will explore the group memberships in detail.
-
-* From the **SOC-Analysts** group's **Members** tab, we currently see `SOC Analyst1` and `SOC Analyst2`. Administrators can easily add or remove users from this tab in the future as staffing changes.
-
-![alt text](<Screenshots/56 - Soc-group.png>)
-
-* We also have the **SOC-Managers** group. In its Members tab, there is currently only one manager account: `SOC Manager1`. Additional managers can be added to this group whenever necessary.
-
-![alt text](<Screenshots/57 - Soc-managers.png>)
-
-**Conceptual Group Mapping:**
-
-```text
-SOC Analyst1 ─┐
-              ├──> SOC-Analysts
-SOC Analyst2 ─┘
-
-SOC Manager1 ────> SOC-Managers
-
-```
+**SOC Rationale for Disabling vs Deleting:**
+During an incident investigation or employee offboarding, accounts are **disabled** rather than deleted. Deleting an account destroys its unique Security Identifier (SID), breaking audit trails in historical security logs and orphaning file ownership. Disabling cuts off access instantly while preserving forensic evidence.
 
 ---
 
-### Task 04 — Create the SOC-Admins Group
+### Task 05 - Reset User Password
 
-In this task, we are going to create a new group specifically for administrative personnel within the SOC.
+I practiced administrative credential resets:
+1. I right-clicked `Test Analyst` and selected **Reset Password**.
+2. I entered a new temporary password and checked **User must change password at next logon**.
+3. Windows confirmed the password was successfully reset.
 
-**Steps to create the group:**
-
-1. Right-click empty space inside the **SOC** OU.
-2. Hover over **New** and select **Group**.
-3. Name the group: **SOC-Admins**.
-4. Set the **Group scope** to **Global**.
-5. Set the **Group type** to **Security**.
-6. Click **OK** and **SOC-Admin** Group is Created.
-
-![alt text](<Screenshots/58 - Soc-admins.png>)
+![Password Reset Confirmation](Screenshots/55-%20%20Password%20Reset.png)
 
 ---
 
-### Task 05 — Add a User to SOC-Admins
+### Task 06 - Verify the User in Active Directory
 
-We will now add a user into the newly created administrator list.
-
-**Steps to add a member:**
-
-1. Right-click the **SOC-Admins** group and select **Properties**.
-2. Navigate to the **Members** tab.
-3. Click the **Add...** button.
-4. In the object name box, type the name of the test account we created in the previous lab (e.g., **Test Analyst**) and click **Check Names** to verify it.
-5. Click **OK**, then click **Apply** and **OK** to close the properties. The Test Analyst is now a member of the SOC-Admins group.
-
-![alt text](<Screenshots/59 - soc-admin-memeber.png>)
-
----
-
-### Task 06 — Understand Group-Based Access
-
-Our overall directory structure in the lab currently looks like this:
+I reviewed the `SOC` OU to verify that the account was properly positioned within the directory hierarchy:
 
 ```text
 soclab.local
-└── SOC
-    ├── Users
-    │   ├── SOC Analyst1
-    │   ├── SOC Analyst2
-    │   ├── SOC Manager1
-    │   └── Test Analyst
-    │
-    └── Groups
-        ├── SOC-Analysts
-        ├── SOC-Managers
-        └── SOC-Admins
-
+`-- SOC
+    |-- SOC Analyst1
+    |-- SOC Analyst2
+    |-- SOC Manager1
+    `-- Test Analyst
 ```
 
-**The Security Model:**
-Instead of assigning folder and file permissions to every user individually (which is highly inefficient and prone to error), administrators assign permissions directly to the **Groups**.
+![SOC OU Directory Structure Verified](Screenshots/52%20-%20SOC%20test%20.png)
+
+### What This Teaches for SOC Work
+
+1. **Identity Threat Detection:** Monitoring user lifecycle events is a primary SOC detection use case:
+   * Event ID **4720:** An account was created.
+   * Event ID **4722:** An account was enabled.
+   * Event ID **4724:** An attempt was made to reset an account's password.
+   * Event ID **4725:** An account was disabled.
+   * Event ID **4726:** An account was deleted.
+2. Threat actors who gain domain persistence often create rogue accounts or re-enable dormant accounts. Correlating these event IDs with administrative change requests helps detect unauthorized access.
+
+---
+
+<a id="practical-lab-08"></a><a id="practical-lab-08--manage-security-groups"></a><a id="practical-lab-08---manage-security-groups"></a>
+## Practical Lab 08 - Manage Security Groups
+
+* **Objective:** Create and manage Active Directory security groups, configure group memberships, and implement role-based access control.
+* **Target Machine:** `DC01`
+* **Related Concept:** [06 - Local Users and Groups](06%20-%20Local%20Users%20and%20Groups/README.md)
+* **Domain:** `soclab.local`
+
+---
+
+### Task 01 - Inspect Existing SOC Security Groups
+
+I opened **Active Directory Users and Computers** (`dsa.msc`) and navigated to the `SOC` OU:
+
+![Navigating to SOC OU](Screenshots/50%20%20-%20Soclab.local.png)
+
+I reviewed the baseline security groups already provisioned:
+* `SOC-Analysts`
+* `SOC-Managers`
+
+I inspected the **Members** tab of `SOC-Analysts`:
+* Members: `SOC Analyst1`, `SOC Analyst2`
+
+![SOC-Analysts Group Members](Screenshots/56%20-%20Soc-group.png)
+
+I inspected the **Members** tab of `SOC-Managers`:
+* Member: `SOC Manager1`
+
+![SOC-Managers Group Members](Screenshots/57%20-%20Soc-managers.png)
+
+---
+
+### Task 02 - Create the SOC-Admins Security Group
+
+To separate administrative functions from daily analyst duties, I created a dedicated security group:
+1. Inside the `SOC` OU, I right-clicked empty space and selected **New -> Group**.
+2. I configured the group properties:
+   * **Group name:** `SOC-Admins`
+   * **Group scope:** `Global`
+   * **Group type:** `Security`
+3. I clicked **OK** to commit.
+
+![Creating SOC-Admins Group](Screenshots/58%20-%20Soc-admins.png)
+
+---
+
+### Task 03 - Add a User to the SOC-Admins Group
+
+I assigned the `Test Analyst` account to the new administrative group:
+1. I opened the properties of `SOC-Admins` and selected the **Members** tab.
+2. I clicked **Add**, typed `Test Analyst`, and clicked **Check Names**.
+3. I clicked **OK** and **Apply**.
+
+![Test Analyst Added to SOC-Admins](Screenshots/59%20-%20soc-admin-member.png)
+
+---
+
+### Task 04 - Active Directory Security Model
+
+The resulting organizational model maps individual users to functional roles:
 
 ```text
-  USER
-   ↓ (belongs to)
-  GROUP
-   ↓ (is assigned)
- PERMISSION
-   ↓ (applies to)
- RESOURCE (File/Folder)
+Individual Accounts               Domain Security Groups
+-------------------               ----------------------
+SOC Analyst1  ---+
+                 +--------------> SOC-Analysts (Global Security)
+SOC Analyst2  ---+
 
+SOC Manager1  ------------------> SOC-Managers (Global Security)
+
+Test Analyst  ------------------> SOC-Admins (Global Security)
 ```
 
-When users are placed into a group, they dynamically receive all the access rights assigned to that group.
+**Security Principle:**
+Permissions must never be assigned directly to individual user accounts. Assigning permissions to security groups enables centralized, scalable access governance. When personnel transfer roles, administrators update group memberships rather than modifying Access Control Lists on individual servers.
+
+### What This Teaches for SOC Work
+
+1. **Privilege Escalation Monitoring:** Adding a user to a high-privilege group is one of the most critical security events in Active Directory:
+   * Event ID **4728:** A member was added to a security-enabled global group.
+   * Event ID **4732:** A member was added to a security-enabled local group (e.g., local Administrators).
+   * Event ID **4756:** A member was added to a security-enabled universal group.
+2. Attackers perform "Token Manipulation" or add compromised accounts to privileged groups (e.g., Domain Admins, Enterprise Admins) to achieve persistence (MITRE ATT&CK T1098 - Account Manipulation). Monitoring these event IDs is mandatory in enterprise SOCs.
+
+
+<a id="practical-lab-09"></a><a id="practical-lab-09--configure-ntfs-permissions"></a><a id="practical-lab-09---configure-ntfs-permissions"></a>
+## Practical Lab 09 - Configure NTFS Permissions
+
+* **Objective:** Configure granular NTFS permissions on a dedicated folder structure using Active Directory security groups, observing inheritance and access control entries.
+* **Target Machine:** `DC01`
+* **Related Concept:** [07 - NTFS Permissions](07%20-%20NTFS%20Permissions/README.md)
+* **Domain:** `soclab.local`
 
 ---
 
-### Task 07 — Verify Membership & Knowledge Check
+### Task 01 - Create the Lab Directory Structure
 
-**Verification:**
-Double-check the properties of all three groups (**SOC-Analysts**, **SOC-Managers**, **SOC-Admins**) to ensure that all expected users have been correctly organized into their respective groups. Everything should be properly configured.
-
-**Expected Results & Knowledge Check:**
-After completing this lab, We Understand:
-
-* **What a security group is:** A collection of user accounts (or other groups) used by Windows to manage security privileges and network access efficiently.
-* **Why groups are used for permissions:** They allow administrators to apply a single access rule to an entire department or team simultaneously, rather than configuring hundreds of individual user rules.
-* **How users become members of groups:** By manually adding them via the group's "Members" tab, or by adding the group to the user's "Member Of" tab in the Active Directory Users and Computers console.
-* **Why group-based permissions scale better than assigning permissions individually:** When an employee joins or leaves a department, an administrator simply updates their group membership in Active Directory. The underlying NTFS permissions on the file servers never need to be touched, preventing human error, saving time, and maintaining a secure Principle of Least Privilege environment.
-
----
-
-## Practical Lab 09 — Configure NTFS Permissions
-
-* **Goal:** To configure and test NTFS permissions on a dedicated Windows folder using Active Directory security groups.
-* **Machine:** For this lab, we are working on the **DC01** virtual machine.
-
----
-
-### Task 01 — Create the Lab Directory
-
-In this lab, we are going to create a dedicated directory structure for testing permissions.
-
-**Administrative Warning:** We must strictly create new folders for this lab. Do not modify the NTFS permissions of existing Windows system folders, as doing so can corrupt the operating system.
-
-**Steps:**
-
-1. Navigate out of Server Manager and open **File Explorer**.
-2. Open the **C: Drive** (`Local Disk (C:)`).
-3. Right-click in the empty space, hover over **New**, and click **Folder**. Name this folder **SOC-Lab**.
-4. Double-click to open the `SOC-Lab` folder.
-5. Inside `SOC-Lab`, create another new folder and name it **Reports**.
-
-![alt text](<Screenshots/60 - Reports.png>)
-
-Conceptually, the directory structure now looks like this:
+I created a dedicated testing directory on `DC01` to avoid touching operating system directories:
+1. I opened File Explorer and navigated to `C:\`.
+2. I created a root directory named `SOC-Lab`.
+3. Inside `C:\SOC-Lab`, I created a subfolder named `Reports`.
 
 ```text
 C:\
-└── SOC-Lab
-    └── Reports
-
+`-- SOC-Lab
+    `-- Reports
 ```
 
----
-
-### Task 02 — Create Test Files
-
-We need dummy data inside the folder to test file-level access later.
-
-**Steps:**
-
-1. Navigate to the path: `C:\SOC-Lab\Reports`.
-2. Right-click in the empty space → **New** → **Text Document**. Name it `Analyst-Report.txt`.
-
-![alt text](<Screenshots/61 - First file.png>)
-
-3. Open the file, write a simple text sentence (e.g., "This is a confidential analyst report."), and press **Ctrl+S** to save it.
-4. Create a second text document named `Manager-Report.txt`, add some text, and save it.
-
-![alt text](<Screenshots/61 - Seconf file.png>)
+![Reports Folder Created](Screenshots/60%20-%20Reports.png)
 
 ---
 
-### Task 03 — Open NTFS Security Settings
+### Task 02 - Create Test Documents
 
-To manage permissions, we must access the Advanced Security Settings of the folder.
+To verify file-level permissions during subsequent tests, I created two test files inside `C:\SOC-Lab\Reports`:
+1. `Analyst-Report.txt`: Created with baseline triage text and saved.
+2. `Manager-Report.txt`: Created with summary text and saved.
 
-**Steps:**
+![Creating Analyst Report](Screenshots/61%20-%20First%20file.png)
 
-1. Right-click the **Reports** folder (`C:\SOC-Lab\Reports`) and select **Properties**.
-2. Navigate to the **Security** tab.
-3. Click the **Advanced** button near the bottom.
-
-From the Advanced Security Settings window, we can observe several critical fields that define how permissions are applied:
-
-![alt text](<Screenshots/62 - Security Advanced.png>)
-
-* **Principal:** The specific user, security group, or built-in identity (e.g., Administrators, SOC-Analysts) to which the permission rule applies.
-* **Type:** Indicates whether the permission rule is set to **Allow** or **Deny** access to the resource.
-* **Access:** The specific level of permission granted or denied by this rule (e.g., Read, Modify, Full Control).
-* **Inherited from:** Shows where the permission originated. If it lists a parent folder path (like `C:\SOC-Lab\`), the permission is inherited. If it says `None` or `<not inherited>`, it is an Explicit permission applied directly to this folder.
-* **Applies to:** Defines the scope of the rule, detailing whether it affects only this folder, or if it flows down to subfolders and files.
+![Creating Manager Report](Screenshots/61%20-%20Second%20file.png)
 
 ---
 
-### Task 04 — Understand Inheritance
+### Task 03 - Inspect NTFS Advanced Security Settings
 
-By default, the folder `C:\SOC-Lab\Reports` receives its baseline permissions from its parent folder (`C:\SOC-Lab`). This downward flow of permissions is called **Inheritance**.
+To manage permissions at the filesystem level, I opened the Advanced Security Settings:
+1. I right-clicked `C:\SOC-Lab\Reports` and selected **Properties**.
+2. I switched to the **Security** tab and clicked **Advanced**.
 
-Conceptually:
+![Advanced Security Settings](Screenshots/62%20-%20Security%20Advanced.png)
+
+I analyzed the core components of the Access Control List (ACL):
+* **Principal:** The user, group, or service account to which the rule applies.
+* **Type:** Allow or Deny.
+* **Access:** The granular permission granted (Full control, Modify, Read & execute, Read, Write).
+* **Inherited from:** Identifies whether the rule originated from a parent folder (e.g., `C:\SOC-Lab`) or was applied explicitly.
+* **Applies to:** Defines the inheritance scope (This folder, subfolders, and files).
+
+---
+
+### Task 04 - Understand Permission Inheritance
+
+By default, new folders inherit permissions from their parent container. In this configuration:
+* `C:\SOC-Lab` passes its baseline permissions down to `Reports`.
+* `Reports` automatically passes these permissions down to any files created inside it.
 
 ```text
- C:\SOC-Lab
-      │
-      │ (Inherited permissions flow downward)
-      ▼
-   Reports
-      │
-      ▼
-    Files
-
+C:\SOC-Lab (Parent)
+    |
+    | (Inherited permissions flow downward)
+    v
+ Reports (Child)
+    |
+    v
+  Files
 ```
 
-*Note: For this specific exercise, we are keeping inheritance enabled to understand how baseline permissions behave while we add explicit permissions on top of them.*
+---
+
+### Task 05 - Assign Read & Execute to SOC-Analysts
+
+1. On the Security tab of `Reports`, I clicked **Edit** and then **Add**.
+2. I added `SOC-Analysts` from `soclab.local`.
+3. I checked **Allow** for **Read & execute** (which automatically enabled *List folder contents* and *Read*).
+4. I clicked **Apply**.
+
+![Assigning Read and Execute to SOC-Analysts](Screenshots/63%20-%20Soc%20analysts%20permissions.png)
 
 ---
 
-### Task 05 — Add SOC-Analysts
+### Task 06 - Assign Modify to SOC-Managers
 
-*(Note: Added for logical progression to the final architecture)*
+1. I clicked **Add** and selected `SOC-Managers`.
+2. I checked **Allow** for **Modify** (which automatically enabled *Read & execute*, *List folder contents*, *Read*, and *Write*).
+3. I clicked **Apply**.
 
-We need to give our standard analysts the ability to read the reports.
-
-1. On the Security tab of the `Reports` folder, click **Edit...**
-2. Click **Add...**
-3. Type `SOC-Analysts`, click **Check Names**, and click **OK**.
-4. In the permissions list for SOC-Analysts, check the box for **Read & execute** (this will automatically select List folder contents and Read).
-5. Click **Apply**.
-
-![alt text](<Screenshots/63 - Soc analysts permissions.png>)
+![Assigning Modify to SOC-Managers](Screenshots/65%20-%20Soc%20manager%20permissions.png)
 
 ---
 
-### Task 06 — Add SOC-Managers
+### Task 07 - Assign Full Control to SOC-Admins
 
-Next, we will add the SOC-Managers group and grant them **Modify** permissions so they can edit and delete reports.
+1. I clicked **Add** and selected `SOC-Admins`.
+2. I checked **Allow** for **Full control**.
+3. I clicked **Apply** and **OK**.
 
-**Steps to assign Modify permissions:**
-
-1. While still on the Security tab, click **Edit...** to open the Permissions window.
-2. Click **Add...** to add a new principal.
-3. Type `SOC-Managers` in the object name box, click **Check Names** to validate it against Active Directory, and click **OK**.
-4. Select `SOC-Managers` in the top list. In the permissions checklist below, check the **Allow** box next to **Modify**. (Notice that Read & execute, List, Read, and Write will automatically check themselves as well).
-5. Click **Apply**.
-
-![alt text](<Screenshots/65 - Soc manager permissions.png>)
+![Assigning Full Control to SOC-Admins](Screenshots/64%20-%20Soc%20Admin%20permissions.png)
 
 ---
 
-### Task 07 — Add SOC-Admins
+### Task 08 - Permission Design Summary
 
-Finally, we will add the SOC-Admins group and grant them **Full control** so they have complete administrative authority over the folder and its permissions.
-
-**Steps to assign Full Control permissions:**
-
-1. In the same Permissions window, click **Add...**
-2. Type `SOC-Admins`, click **Check Names**, and click **OK**.
-3. Select `SOC-Admins` in the top list.
-4. In the permissions checklist, check the **Allow** box next to **Full control**.
-5. Click **Apply** and then **OK** to close the windows and commit all permission changes.
-
-![alt text](<Screenshots/64 - Soc Admin permissions.png>)
-
----
-
-### Task 08 — Verify the Permission Design
-
-We have successfully configured the permissions based on the Principle of Least Privilege.
-
-**Effective Access Table:**
+I established a complete role-based permission hierarchy:
 
 | Group | NTFS Permission | Purpose |
-| --- | --- | --- |
-| **SOC-Analysts** | Read & Execute | Can view and read the reports, but cannot alter or delete them. |
-| **SOC-Managers** | Modify | Can view, edit, write, and delete the reports. |
-| **SOC-Admins** | Full Control | Can do everything a manager can, plus change NTFS permissions and take ownership. |
+| :--- | :--- | :--- |
+| **SOC-Analysts** | Read & Execute | Can view directory contents and open files without altering data. |
+| **SOC-Managers** | Modify | Can read, write, edit, and delete reports. |
+| **SOC-Admins** | Full Control | Full administrative control, including modifying ACLs and taking ownership. |
 
-**The Administrative Architecture:**
-This lab successfully demonstrates the core Windows Server security model. Instead of assigning permissions to users directly, we assigned them to groups:
+### What This Teaches for SOC Work
 
-```text
-       Users
-         ↓ (are placed into)
-   Security Groups
-         ↓ (are assigned)
-  NTFS Permissions
-         ↓ (applied to)
- C:\SOC-Lab\Reports
-
-```
+1. **Principle of Least Privilege:** Standard users (SOC analysts) must never possess write or delete permissions on central report directories. Restricting permissions prevents accidental data destruction or intentional tampering by malicious insiders.
+2. **Access Control Auditing:** NTFS permissions are enforced by the Windows Security Reference Monitor (SRM). When a user attempts to access a file, Windows evaluates the user's access token against the Discretionary Access Control List (DACL).
 
 ---
 
-## Practical Lab 10 — NTFS Permission Scenarios
+<a id="practical-lab-10"></a><a id="practical-lab-10--ntfs-permission-scenarios"></a><a id="practical-lab-10---ntfs-permission-scenarios"></a>
+## Practical Lab 10 - NTFS Permission Scenarios
 
-* **Goal:** To verify effective NTFS access for different domain users and understand how permissions affect real-world file operations. Rather than just configuring permissions, we will now test whether our security design actually works as intended.
-* **Machine:** **DC01** (and conceptually testing user access).
-
----
-
-### Task 01 — Test Analyst Access
-
-We will begin by verifying the permissions for our standard analysts.
-
-**Testing Steps:**
-
-1. Log into the system using the **SOC Analyst2** credentials.
-2. Navigate to `C:\SOC-Lab\Reports`.
-3. Open `Analyst-Report.txt`. The file should open successfully, verifying **Read** access.
-4. Attempt to type a new sentence into the document and save it.
-5. **Expected Result:** The system should throw an "Access Denied" error.
-
-![alt text](<Screenshots/66 - Soc analyst2 permission errors.png>)
-
-6. Attempt to delete the file. The system should block the action.
-
-![alt text](<Screenshots/67 - File Delete Permission.png>)
-
-**Conclusion:** The `SOC-Analysts` group correctly provides **Read & Execute** capabilities, successfully preventing unauthorized modifications.
+* **Objective:** Test and validate effective NTFS permissions across different user roles, test inheritance and explicit permissions, and analyze permission conflicts.
+* **Target Machine:** `DC01`
+* **Related Concept:** [07 - NTFS Permissions](07%20-%20NTFS%20Permissions/README.md)
+* **Domain:** `soclab.local`
 
 ---
 
-### Task 02 — Test Manager Access
+### Task 01 - Test Analyst Access (Read-Only Enforcement)
 
-Next, we verify the permissions for the management tier.
+I validated access for standard analysts using the `SOC Analyst2` account:
+1. I opened `C:\SOC-Lab\Reports\Analyst-Report.txt`. The file opened successfully (Read access confirmed).
+2. I attempted to add text and save the file. Windows rejected the operation with an `Access is denied` prompt.
 
-**Testing Steps:**
+![Analyst Save Blocked - Access Denied](Screenshots/66%20-%20Soc%20analyst2%20permission%20errors.png)
 
-1. Log into the system using the **SOC Manager1** credentials.
-2. Navigate to `C:\SOC-Lab\Reports`.
-3. Open `Manager-Report.txt`, add a new line of text, and save the file. The save should be successful.
-4. Right-click inside the folder and create a new text document named `Weekly-Brief.txt`. The creation should be successful.
+3. I attempted to delete `Analyst-Report.txt`. Windows blocked the deletion, displaying a permission error dialog.
 
-![alt text](<Screenshots/68 - soc.png>)
+![Analyst Delete Blocked](Screenshots/67%20-%20File%20Delete%20Permission.png)
 
-5. Delete `Weekly-Brief.txt`. The deletion should be successful.
-
-![alt text](<Screenshots/69 - new.png>)
-
-**Conclusion:** The `SOC-Managers` group correctly provides **Modify** capabilities, allowing the user to Read, Create, Modify, and Delete files.
+**Observation:** The `SOC-Analysts` group permission strictly enforced read-only access. Modification and deletion were completely blocked.
 
 ---
 
-### Task 03 — Test Administrator Access
+### Task 02 - Test Manager Access (Modify Enforcement)
 
-Finally, we verify the permissions for the administrative tier.
+Next, I tested operational rights using the `SOC Manager1` account:
+1. I opened `C:\SOC-Lab\Reports\Manager-Report.txt`, added text, and saved. The file saved successfully without error.
+2. I created a new text document named `Weekly-Brief.txt`. The file was created immediately.
 
-**Testing Steps:**
+![Manager Successfully Created File](Screenshots/68%20-%20soc.png)
 
-1. Log into the system using your designated administrative lab account (a member of the **SOC-Admins** group).
-2. Navigate to `C:\SOC-Lab\Reports`.
-3. Right-click the folder and go to **Properties → Security**.
-4. Attempt to change a permission or take ownership of a file.
+3. I deleted `Weekly-Brief.txt`. The deletion succeeded without prompting.
 
-![alt text](<Screenshots/70-  Admin Permissions.png>)
+![Manager Successfully Deleted File](Screenshots/69%20-%20new.png)
 
-**Conclusion:** The `SOC-Admins` group correctly provides **Full Control**, allowing not just file modification, but the ability to alter the underlying NTFS Access Control List (ACL) itself.
-
----
-
-### Task 04 — Create an Access Matrix
-
-Based on our design and testing, we can document our observed access controls in a matrix. This matrix proves that our Principle of Least Privilege architecture is functioning correctly.
-
-| User Account | Group Membership | Read | Modify | Delete | Full Control |
-| --- | --- | --- | --- | --- | --- |
-| **SOC Analyst1** | SOC-Analysts | ✓ | ✗ | ✗ | ✗ |
-| **SOC Manager1** | SOC-Managers | ✓ | ✓ | ✓ | ✗ |
-| **Admin Account** | SOC-Admins | ✓ | ✓ | ✓ | ✓ |
+**Observation:** The `SOC-Managers` group held complete operational capability (Read, Write, Create, Delete) under the **Modify** permission.
 
 ---
 
-### Task 05 — Understand Permission Inheritance
+### Task 03 - Test Administrator Access (Full Control Enforcement)
 
-We will now observe how permissions automatically flow down to new folders.
+I tested administrative control using the account belonging to `SOC-Admins`:
+1. I navigated to `C:\SOC-Lab\Reports`, opened folder Properties, and switched to the Security tab.
+2. I opened **Advanced** settings and altered Access Control Entries.
 
-**Steps:**
+![Admin Full Control Permissions Dialog](Screenshots/70-%20%20Admin%20Permissions.png)
 
-1. As an administrator, navigate to `C:\SOC-Lab\Reports`.
-2. Create a new subfolder named **Daily**.
-```text
-C:\SOC-Lab\Reports
-     └── Daily
-
-```
-
-
-3. Right-click the **Daily** folder → **Properties** → **Security** → **Advanced**.
-4. Look at the **Inherited from** column for the listed permissions.
-
-![alt text](<Screenshots/71 - Daily SubFolder.png>)
-
-**Observation:** You will see that the rules for `SOC-Analysts`, `SOC-Managers`, and `SOC-Admins` automatically appear here. The "Inherited from" column will display `C:\SOC-Lab\Reports\`. This demonstrates the Parent → Child inheritance model in action.
+**Observation:** Full Control grants two unique rights not available in Modify:
+* **Change Permissions:** The ability to add, edit, or delete entries in the Discretionary Access Control List (DACL).
+* **Take Ownership:** The ability to seize ownership of the object even if locked out.
 
 ---
 
-### Task 06 — Observe an Explicit Permission
+### Task 04 - Verified NTFS Access Matrix
 
-To understand the difference between Inherited and Explicit permissions visually, we will add a unique rule to the new folder.
+| Account | Group | Read Files | Modify Files | Delete Files | Change Permissions |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **SOC Analyst1 / Analyst2** | `SOC-Analysts` | Allowed | Denied | Denied | Denied |
+| **SOC Manager1** | `SOC-Managers` | Allowed | Allowed | Allowed | Denied |
+| **Admin Account** | `SOC-Admins` | Allowed | Allowed | Allowed | Allowed |
 
-**Steps:**
+---
 
-1. Still in the Advanced Security Settings for the **Daily** folder, click **Add**.
-2. Select a principal (e.g., the `Test Analyst` account).
-3. Grant this user basic **Read** access and click **OK** and **Apply**.
-4. Look at the permission list again.
+### Task 05 - Test Inheritance Propagation
 
-![alt text](<Screenshots/72 - Test Analyst Explict permissions.png>)
+I verified how NTFS permissions propagate to newly created child folders:
+1. Inside `C:\SOC-Lab\Reports`, I created a new subfolder named `Daily`.
+2. I opened **Properties -> Security -> Advanced** on the `Daily` subfolder.
+
+![Daily SubFolder Inheriting Permissions](Screenshots/71%20-%20Daily%20SubFolder.png)
 
 **Observation:**
-
-* For the `SOC-Analysts` group, the "Inherited from" column still says `C:\SOC-Lab\Reports\`.
-* For the `Test Analyst` account, the "Inherited from" column will say `None` (or `<not inherited>`).
-This allows an administrator to instantly distinguish between an **Explicit** rule (applied directly to this exact folder) and an **Inherited** rule (flowing down from above).
+The permissions for `SOC-Analysts`, `SOC-Managers`, and `SOC-Admins` appeared automatically. The **Inherited from** column clearly stated `C:\SOC-Lab\Reports\`, proving that child objects inherit DACL entries from their parent containers by default.
 
 ---
 
-### Task 07 — Permission Conflict Experiment (Conceptual)
+### Task 06 - Configure and Identify Explicit Permissions
 
-In enterprise environments, users often belong to multiple groups, which can create overlapping permissions.
+To distinguish between inherited and explicit permissions:
+1. Inside the `Daily` folder's Advanced Security settings, I clicked **Add**.
+2. I selected `Test Analyst` and granted basic **Read** permission.
+3. I inspected the ACL list.
 
-**The Scenario:**
-Suppose a user is a member of two groups:
+![Explicit Permission on Test Analyst](Screenshots/72%20-%20Test%20Analyst%20Explict%20permissions.png)
 
-* `SOC-Analysts` (Assigned **Read** permissions)
-* `Incident-Responders` (Assigned **Modify** permissions)
+**Observation:**
+* For `SOC-Analysts`, the "Inherited from" column displayed `C:\SOC-Lab\Reports\`.
+* For `Test Analyst`, the "Inherited from" column displayed `None` (or `<not inherited>`).
 
-**The Cumulative "Allow" Rule:**
-When a user has conflicting *Allow* permissions from multiple groups, Windows combines them. The user's **effective access** becomes the most permissive combination of those rules. In this case, the user gets **Modify** access.
-
-**The Danger of "Deny":**
-If an administrator accidentally adds an explicit **Deny: Write** rule to the `SOC-Analysts` group, that Deny rule will override the Allow rules from other groups. The user will suddenly be unable to modify files, even though their `Incident-Responders` group says they should be able to.
-
-**Administrative Takeaway:**
-Because effective access is determined by evaluating User Memberships + Group Memberships + Explicit Rules + Inherited Rules + Allow/Deny status, administrators must be highly organized. **Never randomly add "Deny" entries** to fix a problem, as it will cause unpredictable access conflicts across multiple groups. Design clean, "Allow"-based group architectures instead.
+This visual difference demonstrates how administrators distinguish between inherited baseline rules and explicit overrides applied directly to an individual object.
 
 ---
 
-## Practical Lab 11 — Create and Access a Network Shared Folder
+### Task 07 - Permission Evaluation & The Deny Precedence Rule
 
-* **Goal:** To create a shared folder on DC01, configure both Share and NTFS permissions, and access it over the network from CLIENT01 using a domain account.
-* **Domain:** soclab.local
-* **Machines:** **DC01** (Domain Controller / File Server) and **CLIENT01** (Domain-joined Windows client).
+When Windows evaluates effective access for a user, it follows strict precedence rules:
+
+1. **Explicit Deny** beats **Explicit Allow**.
+2. **Explicit Allow** beats **Inherited Deny**.
+3. **Inherited Deny** beats **Inherited Allow**.
+4. If neither Allow nor Deny is matched, access is implicitly **Denied**.
+
+**Administrative Best Practice:**
+Avoid using explicit **Deny** permissions whenever possible. A single explicit Deny on a group overrides all Allow entries for that user across all their group memberships, creating complex troubleshooting issues. Robust security architectures rely exclusively on targeted **Allow** entries and least-privilege group scoping.
+
+### What This Teaches for SOC Work
+
+1. **Detecting Permission Tampering:** Attackers who compromise a domain account often modify NTFS permissions on sensitive directories (e.g., using `icacls`, `takeown`, or PowerShell `Set-Acl`) to stage data or grant persistence. Monitoring Windows Security Event ID **4670** (Permissions on an object were changed) is essential for detecting unauthorized DACL manipulation.
+2. **Effective Access Triage:** When investigating data exfiltration or unauthorized file reads, SOC analysts must analyze effective permissions by tracing group memberships, inherited rules, and explicit permissions.
 
 ---
 
-### Task 01 — Create the Folder
+<a id="practical-lab-11"></a><a id="practical-lab-11--create-and-access-a-network-shared-folder"></a><a id="practical-lab-11---create-and-access-a-network-shared-folder"></a>
+## Practical Lab 11 - Create and Access a Network Shared Folder
 
-First, we will create the directory structure that will be shared across the network.
+* **Objective:** Create a network shared folder on DC01, configure both Share and NTFS permissions, access it remotely from CLIENT01 using domain accounts, and monitor active network sessions.
+* **Related Concept:** [08 - Shared Folders](08%20-%20Shared%20Folders/README.md) and [07 - NTFS Permissions](07%20-%20NTFS%20Permissions/README.md)
+* **Target Machines:** `DC01` (Domain Controller / File Server) and `CLIENT01` (Domain-joined Windows 10 workstation)
+* **Domain:** `soclab.local`
 
-**Steps:**
+---
 
-1. Log into **DC01**.
-2. Open File Explorer and navigate to the `C:\` drive.
-3. Create a master folder named `SOC-Reports` (or navigate to previously created `C:\SOC-Lab\Reports`).
-4. Inside this folder, create three subfolders:
-* Daily Reports
-* Incident Reports
-* Management Reports
+### Task 01 - Create the Folder Hierarchy
 
-
-
-Conceptually, the directory structure looks like this:
+I logged into **DC01** and created the directory structure on the local `C:\` drive to store SOC operational records:
 
 ```text
 C:\SOC-Reports
-├── Daily Reports
-├── Incident Reports
-└── Management Reports
-
+|-- Daily Reports
+|-- Incident Reports
+`-- Management Reports
 ```
-From this Visulization of Reports Folder: 
 
-![alt text](<Screenshots/73 - Reports.png>)
+1. I opened File Explorer on DC01 and navigated to `C:\`.
+2. I created a master directory named `SOC-Reports`.
+3. Inside `SOC-Reports`, I created three subfolders: `Daily Reports`, `Incident Reports`, and `Management Reports`.
+
+![SOC-Reports Folder Structure](Screenshots/73%20-%20Reports.png)
 
 ---
 
-### Task 02 — Create Sample Files
+### Task 02 - Create Sample Files
 
-To test our permissions later, we need sample data inside these folders.
-
-**Steps:**
-
-1. Double-click into the **Daily Reports** folder, create a new text document, and name it `Daily-Report.txt`. Add some basic text inside and save it.
-2. Repeat this process for the other folders.
-
-Conceptually, the file structure now looks like this:
+To test read, write, and delete permissions accurately during client testing, I populated each subfolder with a baseline text document:
 
 ```text
-Daily Reports\Daily-Report.txt
-Incident Reports\Incident-Report.txt
-Management Reports\Management-Report.txt
-
+C:\SOC-Reports\Daily Reports\Daily-Report.txt
+C:\SOC-Reports\Incident Reports\Incident-Report.txt
+C:\SOC-Reports\Management Reports\Management-Report.txt
 ```
 
----
-
-### Task 03 — Share the Folder
-
-Now we will make the `SOC-Reports` folder available over the network.
-
-**Steps:**
-
-1. Right-click the `SOC-Reports` folder and select **Properties**.
-2. Navigate to the **Sharing** tab and click **Advanced Sharing...**.
-3. Check the box labeled **Share this folder**.
-4. Set the Share name to **SOC-Reports** (this is usually populated automatically).
-
-![alt text](<Screenshots/74 - Report-Share-Permission.png>)
-
-The network path to access this folder is now established as `\\WIN-DEF8VDFQ099\SOC-Reports` (or simply `\\DC01\SOC-Reports` depending on your hostname).
+1. Inside `Daily Reports`, I created `Daily-Report.txt` with sample logging text.
+2. Inside `Incident Reports`, I created `Incident-Report.txt` with sample triage data.
+3. Inside `Management Reports`, I created `Management-Report.txt` with summary notes.
 
 ---
 
-### Task 04 — Configure Share Permissions
+### Task 03 - Share the Folder on the Network
 
-While still in the Advanced Sharing window, we must configure the "front door" network permissions.
+Next, I enabled network file sharing for the `SOC-Reports` directory:
 
-**Steps:**
+1. On DC01, I right-clicked `C:\SOC-Reports` and selected **Properties**.
+2. I navigated to the **Sharing** tab and clicked **Advanced Sharing**.
+3. I checked the box labeled **Share this folder**.
+4. I kept the default Share name as `SOC-Reports`.
 
-1. Click the **Permissions** button.
-2. By default, the `Everyone` group is listed.
-3. For this specific exercise, ensure the `Everyone` group is set to **Read** only.
-4. Click **Apply** and **OK**.
+![Advanced Sharing Configuration](Screenshots/74%20-%20Report-Share-Permission.png)
 
-![alt text](<Screenshots/75 - Report-Permissions.png>)
+This established the network UNC path as `\\WIN-DEF8VDFQ099\SOC-Reports` (or `\\DC01\SOC-Reports` / `\\192.168.10.10\SOC-Reports`).
 
-**The Access Flow Concept:**
-Even with Share Permissions set, the underlying NTFS permissions still apply. A user must pass *both* gates.
+---
+
+### Task 04 - Configure Share Permissions
+
+While in the **Advanced Sharing** dialog, I configured the network-level ("front door") permissions:
+
+1. I clicked the **Permissions** button.
+2. By default, the `Everyone` group was present.
+3. For this initial test, I left `Everyone` set to **Read** only (unchecked Change and Full Control).
+4. I clicked **Apply** and **OK**.
+
+![Share Permissions Configured to Read Only](Screenshots/75%20-%20Report-Permissions.png)
+
+**Network Access Architecture:**
+When a network user connects, they must traverse two permission layers:
 
 ```text
-  Network request from CLIENT01
-             │
-             ▼
-      Share Permission (The Front Door)
-             │
-             ▼
-      NTFS Permission (The Vault)
-             │
-             ▼
-      Actual file access
-
+Network Request from CLIENT01
+           |
+           v
+  Share Permission (Network Front Door)
+           |
+           v
+  NTFS Permission (File System ACL)
+           |
+           v
+  Effective Access (Most Restrictive Wins)
 ```
 
 ---
 
-### Task 05 — Configure NTFS Permissions
+### Task 05 - Configure Granular NTFS Permissions
 
-Now we, navigate to the **Security** tab of the `SOC-Reports` folder to configure the granular file-system permissions. Add the groups and assign the following permissions:
+I navigated to the **Security** tab of `C:\SOC-Reports` to define granular file system permissions for my domain security groups:
 
-| Group | NTFS Permission |
-| --- | --- |
-| **SOC-Analysts** | Read & Execute |
-| **SOC-Managers** | Modify |
-| **SOC-Admins** | Full Control |
+| Group | Assigned NTFS Permission | Administrative Intent |
+| :--- | :--- | :--- |
+| **SOC-Analysts** | Read & Execute | Analysts can read daily logs and templates without modifying records. |
+| **SOC-Managers** | Modify | Managers can author, edit, and delete reports. |
+| **SOC-Admins** | Full Control | Administrators maintain full management and permission control. |
 
-![alt text](<Screenshots/76 - NTFS-Permissions.png>)
+1. On the **Security** tab, I clicked **Edit** and then **Add**.
+2. I added `SOC-Analysts`, `SOC-Managers`, and `SOC-Admins` from `soclab.local`.
+3. I assigned the permissions as specified in the table above.
 
-**The Complete Design Model:**
-Based on our configuration, here is the current security architecture. *(Note: This setup contains a deliberate configuration overlap that we will discover in the testing phase).*
+![NTFS Security Permissions Assigned](Screenshots/76%20-%20NTFS-Permissions.png)
+
+**Security Model In Place:**
+At this point, I had configured:
 
 ```text
-                \\DC01\SOC-Reports
-                         │
-                   Share: Read
-                         │
-                         ▼
-                 NTFS Permissions
-                         │
-          ┌──────────────┼──────────────┐
-          ▼              ▼              ▼
-   SOC-Analysts    SOC-Managers    SOC-Admins
-       Read            Modify       Full Control
-
+                  \\DC01\SOC-Reports
+                           |
+                      Share: Read
+                           |
+                           v
+                    NTFS Permissions
+          +----------------+----------------+
+          |                                 |
+          v                                 v
+    SOC-Analysts                      SOC-Managers
+   NTFS: Read & Exec                  NTFS: Modify
 ```
 
----
-
-### Task 06 — Access from CLIENT01
-
-Now we move to the client machine to test network access.
-
-**Steps:**
-
-1. Log into **CLIENT01** using the **SOC Analyst1** domain credentials.
-2. Open File Explorer. In the address bar at the top, type `\\WIN-DEF8VDFQ099\SOC-Reports` (or `\\192.168.10.10\SOC-Reports`) and press **Enter**.
-
-![alt text](<Screenshots/77 - CLIENT01.png>)
-
-3. **Observation:** The shared folder opens successfully. We did not copy these files to CLIENT01; we are viewing the live files stored on DC01's C: drive over the network. This is only possible because both machines are joined to the `soclab.local` domain and reside on the same internal virtual network.
+*Note: This deliberate configuration mismatch between Share (Read) and NTFS (Modify) forms the basis of the troubleshooting test in Task 08.*
 
 ---
 
-### Task 07 — Test Analyst Permissions
+### Task 06 - Access the Network Share from CLIENT01
 
-Let's test the effective permissions for the Analyst account over the network. We do not assume it works; we verify every action.
+I switched to the Windows 10 client machine (**CLIENT01**) to test domain network access:
 
-* **Test 01 - Open a Report:** *Success.* The analyst can open the folder because of the Share (Read) and NTFS (Read & Execute) permissions.
-* **Test 02 - Read its content:** *Success.* The text inside the file is visible.
-* **Test 03 - Create a new file:** *Failed.* Attempting to right-click and create a new file results in an "Access Denied" error.
+1. I logged into **CLIENT01** as `soclab\SOC Analyst1`.
+2. I opened File Explorer.
+3. In the address bar, I typed the UNC path: `\\WIN-DEF8VDFQ099\SOC-Reports` (or `\\192.168.10.10\SOC-Reports`) and pressed **Enter**.
 
-![alt text](<Screenshots/78 - Errors-Folder.png>)
+![Navigating to UNC Share from CLIENT01](Screenshots/77%20-%20CLIENT01.png)
 
-* **Test 04 - Modify Existing File:** *Failed.* The analyst can type new text into the notepad file, but when they press Save, Windows opens a "Save As" prompt because they do not have permission to overwrite the original file on the server.
-
-* **Test 05 - Delete a File:** *Failed.* Pressing delete throws a permissions error.
-
-![alt text](<Screenshots/79 - Folder-Errors.png>)
-
-**Conclusion:** The SOC-Analysts group permissions are functioning perfectly.
+**Observation:**
+The shared folder opened immediately. CLIENT01 did not have local copies of these files; it accessed the live file system on DC01 over SMB because both systems belong to `soclab.local` on the `SOC-LAB` internal network.
 
 ---
 
-### Task 08 — Test Manager Permissions
+### Task 07 - Test Analyst Account Permissions
 
-Log out of CLIENT01 and log back in using the **SOC Manager1** account. Opened the shared folder again.
+From CLIENT01, logged in as `SOC Analyst1`, I tested each standard file operation:
 
-Let's test the Manager's permissions. *Pay close attention to the results based on our design in Task 05.*
+1. **Test 1 - Open Folder:** Success. The subfolders opened without error.
+2. **Test 2 - Read File:** Success. I opened `Daily-Report.txt` and read the contents.
+3. **Test 3 - Create New File:** Failed (`Access is denied`). When I attempted to create a new text file inside the folder, Windows blocked the operation.
+4. **Test 4 - Modify Existing File:** Failed (`Access is denied`). I could type text into Notepad, but clicking **Save** prompted a "Save As" dialog because the server rejected the write.
+5. **Test 5 - Delete File:** Failed (`File Access Denied`). Pressing Delete generated an error dialog requiring administrative permissions.
 
-* **Test 01 - Read:** *Success.* The manager can read the files.
-* **Test 02 - Create:** *Failed (Access Denied).*
+![Analyst Access Denied Creating Files](Screenshots/78%20-%20Errors-Folder.png)
 
-![alt text](<Screenshots/81 - Manager Creation.png>)
+![Analyst Access Denied Deleting Files](Screenshots/79%20-%20Folder-Errors.png)
 
-* **Test 03 - Modify:** *Failed (Access Denied).*
-* **Test 04 - Delete:** *Failed (Access Denied).*
-
-![alt text](<Screenshots/80 - Manager-Permissions.png>)
-
-**Why did the Manager fail? (The Effective Permission Trap)**
-Even though we gave SOC-Managers **Modify** permissions on the NTFS Security tab, we restricted the Share Permission to **Read** for Everyone. When accessing over the network, Windows applies the *most restrictive* permission.
-
-`Share (Read) + NTFS (Modify) = Effective Network Access (Read).`
-
-*To fix this so the Manager can actually do their job over the network, an administrator must go back to DC01, change the Share Permission to **Full Control** or **Change**, and let the NTFS permissions handle the exact restrictions.*
+**Conclusion:** The `SOC-Analysts` group configuration functioned exactly as intended for read-only triage personnel.
 
 ---
 
-### Task 09 — Compare Local vs Network Access
+### Task 08 - Test Manager Permissions & The Effective Permission Trap
 
-This is a critical distinction for Windows Administrators to observe clearly:
+Next, I logged out of CLIENT01 and logged back in as `soclab\SOC Manager1` to verify manager rights:
 
-* **Local Access:** If an administrator logs directly into the desktop of DC01 and opens `C:\SOC-Reports`, they are accessing the file locally.
+1. I opened `\\WIN-DEF8VDFQ099\SOC-Reports`.
+2. I tested file operations:
+   * **Test 1 - Read File:** Success.
+   * **Test 2 - Create File:** Failed (`Access is denied`).
+   * **Test 3 - Modify File:** Failed (`Access is denied`).
+   * **Test 4 - Delete File:** Failed (`Access is denied`).
+
+![Manager Blocked Creating New Files](Screenshots/81%20-%20Manager%20Creation.png)
+
+![Manager Blocked Deleting Files](Screenshots/80%20-%20Manager-Permissions.png)
+
+**Why Did the Manager Fail Despite NTFS Modify Rights?**
+This demonstrated the classic **Effective Permission Trap**:
+* On the NTFS Security tab, `SOC-Managers` has **Modify** permissions.
+* On the Share Permissions tab, `Everyone` was configured with **Read** only.
+* When accessing resources over the network (SMB), Windows evaluates both layers and enforces the **most restrictive** permission:
+
 ```text
-Local access
-     ↓
-NTFS permissions apply exclusively.
-
+Share Permission: Read
+       +
+NTFS Permission:  Modify
+       =
+Effective Access: Read
 ```
 
-
-* **Network Access:** If a user logs into CLIENT01 and accesses `\\DC01\SOC-Reports`, they are coming over the network.
-```text
-Network access
-     ↓
-Share permissions
-     +
-NTFS permissions apply (The most restrictive wins).
-
-```
-
-
+**Resolution:**
+To allow managers to modify files over the network without weakening security, an administrator sets the network **Share permission to Full Control (or Change)** for authenticated users, and allows the granular **NTFS permissions** to govern actual file access.
 
 ---
 
-### Task 10 — Verify the Share from Computer Management
+### Task 09 - Compare Local vs Network Access
 
-We can verify that our folder is actively shared using administrative tools on DC01.
+To solidify this concept, I verified how Windows handles local versus network requests:
+
+```text
+Local Access (Logged into DC01 directly):
+  User opens C:\SOC-Reports
+  Only NTFS permissions apply (Manager has full Modify rights).
+
+Network Access (Connecting from CLIENT01 over SMB):
+  User opens \\DC01\SOC-Reports
+  Share permissions AND NTFS permissions apply.
+  The most restrictive result is enforced.
+```
+
+---
+
+### Task 10 - Verify Shares in Computer Management & CLI
+
+I returned to DC01 to verify active shares using both graphical and command-line tools:
 
 **GUI Method:**
+1. I opened **Computer Management** (`compmgmt.msc`).
+2. I navigated to **System Tools -> Shared Folders -> Shares**.
+3. I observed `SOC-Reports` listed alongside system default shares (`C$`, `IPC$`, `ADMIN$`).
 
-1. On DC01, open **Computer Management** (`compmgmt.msc`).
-2. Navigate to **System Tools → Shared Folders → Shares**.
+![Verifying Shares in Computer Management](Screenshots/82%20-%20Share.png)
 
-![alt text](<Screenshots/82 - Share.png>)
+**Command-Line Method:**
+1. I opened Command Prompt.
+2. I ran `net share`:
 
-3. **Observation:** We should see that `SOC-Reports` listed alongside default administrative shares like `C$` and `IPC$`. This connects our earlier Computer Management lab to this live practical exercise.
+```cmd
+net share
+```
 
-**CLI Method:**
+![Net Share Command Output](Screenshots/83%20-%20net%20share.png)
 
-1. Open **Command Prompt**.
-2. Type `net share` and press Enter.
-
-![alt text](<Screenshots/83 - net share.png>)
-
-3. **Observation:** The output will display `SOC-Reports` mapped to the `C:\SOC-Reports` directory.
-
----
-
-### Task 11 — Observe Sessions
-
-Finally, we can observe live network activity.
-
-**Steps:**
-
-1. Ensure CLIENT01 is currently viewing the `\\DC01\SOC-Reports` folder (leave the window open on the client).
-2. On DC01, open **Computer Management → Shared Folders → Sessions**.
-
-![alt text](<Screenshots/84 - Sessions-cmpt.png>)
-
-3. **Observation:** You will see a live session entry for the `CLIENT01` machine and the user account (e.g., `SOC Analyst1` or `SOC Manager1`) that is currently connected.
-4. Click on **Open Files** in the left pane. If the user on CLIENT01 has a text document actively open, it will appear here, showing exactly which file is locked by which user over the network.
-
-This successfully demonstrates the real-world application of the monitoring tools we learned about in the Computer Management module.
-
---- 
-
-## Practical Lab 12 — Share + NTFS Permission Scenarios
-
-* **Goal:** To understand what actually happens when Share permissions and NTFS permissions differ. We will deliberately create different combinations on DC01 and test them over the network from CLIENT01 to observe effective access.
-* **Machines:** **DC01** (File Server) and **CLIENT01** (Network Client).
+The command confirmed that `SOC-Reports` was shared from `C:\SOC-Reports`.
 
 ---
 
-### Scenario 1 — Share Read + NTFS Modify
+### Task 11 - Monitor Active Sessions and Open Files
 
-In this scenario, we configure conflicting permissions for the `SOC-Lab\Reports` folder on DC01 and test them over the network using the **SOC Manager1** account from CLIENT01.
+While keeping `\\WIN-DEF8VDFQ099\SOC-Reports` open on CLIENT01, I monitored the live connection on DC01:
 
-* **NTFS Permission:** Set to **Modify** for the `SOC-Managers` group.
-* **Share Permission:** Set to **Read** for `Everyone`.
+1. In **Computer Management**, I clicked **Shared Folders -> Sessions**.
+2. I observed an active session originating from `CLIENT01` under the logged-in user account.
+3. I clicked **Open Files** to inspect open file handles and lock statuses across the network.
 
-**The Result:**
-When accessing the folder over the network, Windows evaluates both layers of security. The rule is that the *most restrictive* permission always wins. Because the Share permission acts as a restrictive "front door," it limits the user before they ever reach the NTFS level.
+![Monitoring Active Sessions in Computer Management](Screenshots/84%20-%20Sessions-cmpt.png)
 
-Therefore, the Manager can only read documents. They cannot create, edit, or delete them, despite having Modify rights on the underlying file system.
+---
 
-**Conceptually:**
+### What This Teaches for SOC Work
+
+1. **SMB Session Monitoring:** File sharing leaves detectable traces. Active sessions in Computer Management reflect real-time SMB sessions. In network traffic, this generates SMB2 Tree Connect and Create requests.
+2. **Access Control Troubleshooting:** When users report "Access Denied" over the network, SOC analysts and administrators must check both Share and NTFS ACLs. If an attacker gains network share access, their privileges are capped by the most restrictive layer.
+3. **Audit Logging:** Access attempts against file shares generate Windows Security Log Event ID **5140** (A network share object was checked) and Event ID **5145** (A network share object was accessed). Monitoring these events helps detect unauthorized file collection or ransomware staging.
+
+---
+
+<a id="practical-lab-12"></a><a id="practical-lab-12--share--ntfs-permission-scenarios"></a><a id="practical-lab-12---share--ntfs-permission-scenarios"></a>
+## Practical Lab 12 - Share + NTFS Permission Scenarios
+
+* **Objective:** Test and evaluate the four fundamental Share and NTFS permission combinations to understand effective network permissions, least privilege, and local access bypass.
+* **Related Concept:** [08 - Shared Folders](08%20-%20Shared%20Folders/README.md)
+* **Target Machines:** `DC01` (File Server) and `CLIENT01` (Network Client)
+
+---
+
+### Scenario 1 - Share Read + NTFS Modify
+
+In this scenario, I configured conflicting permissions on DC01 and verified the result over the network from CLIENT01 using `SOC Manager1`:
+
+* **Share Permission:** Read (assigned to `Everyone`)
+* **NTFS Permission:** Modify (assigned to `SOC-Managers`)
 
 ```text
       Share Permission = Read
                +
-      NTFS Permission = Modify
-               ↓
-      Effective Network Access = Read
-
+      NTFS Permission  = Modify
+               |
+               v
+  Effective Access     = Read
 ```
+
+**Observation:**
+When `SOC Manager1` connected over SMB, Windows evaluated both sets of permissions. Because the Share permission acts as the outer gate, setting it to Read prevented the user from creating, editing, or deleting any files, regardless of their NTFS Modify right.
 
 ---
 
-### Scenario 2 — Share Change + NTFS Read
+### Scenario 2 - Share Change + NTFS Read
 
-This scenario reverses the permissions from Scenario 1 to prove that Share permissions do not automatically override NTFS permissions; the most restrictive still wins.
+In this scenario, I tested whether a permissive Share permission could override a restrictive NTFS permission:
 
-* **Share Permission:** Set to **Change** (which allows modifications over the network).
-* **NTFS Permission:** Set to **Read** only for the `SOC-Managers` group.
-
-**The Test:**
-Log into CLIENT01 as **SOC Manager1** and attempt to create a new folder called `Internal Reports` inside the shared folder.
-
-**The Result:**
-The action will fail with an "Access Denied" error. Even though the network Share permission is set to "Change" (allowing writes), the underlying NTFS file system restricts the user to "Read". The most restrictive layer stops the action.
-
-**Conceptually:**
+* **Share Permission:** Change (assigned to `Everyone`)
+* **NTFS Permission:** Read (assigned to `SOC-Managers`)
 
 ```text
       Share Permission = Change
                +
-      NTFS Permission = Read
-               ↓
-      Effective Network Access = Read
-
+      NTFS Permission  = Read
+               |
+               v
+  Effective Access     = Read
 ```
+
+**The Test:**
+From CLIENT01, logged in as `SOC Manager1`, I attempted to create a new folder named `Internal Reports` inside the share.
+
+**Observation:**
+The action failed immediately with `Access is denied`. Even though the network share allowed changes, the underlying NTFS file system restricted the account to Read. The most restrictive rule always governs network access. Permissive share permissions cannot bypass restrictive NTFS permissions.
 
 ---
 
-### Scenario 3 — Share Full Control + NTFS Modify
+### Scenario 3 - Share Full Control + NTFS Modify (Enterprise Best Practice)
 
-This is the most common and recommended configuration pattern used by Windows Administrators in real-world enterprise environments.
+In this scenario, I applied the industry standard approach recommended for enterprise file servers:
 
-* **Share Permission:** Set to **Full Control** for `Everyone` (leaving the network "front door" completely wide open).
-* **NTFS Permission:** Set to **Modify** for `SOC-Managers`.
-
-**The Test:**
-Log into CLIENT01 as **SOC Manager1**. The manager will successfully be able to read, create, edit, and delete files. However, if the manager attempts to right-click a file, go to the Security tab, and change the permissions, they will be blocked.
-
-**The Result:**
-Because the Share permission is wide open, the NTFS permissions dictate the exact level of access. The effective permission is **Modify**. The manager can do all their daily work, but they cannot alter security configurations (which requires NTFS Full Control).
-
-**Conceptually:**
+* **Share Permission:** Full Control (assigned to `Everyone` or `Authenticated Users`)
+* **NTFS Permission:** Modify (assigned to `SOC-Managers`)
 
 ```text
       Share Permission = Full Control
                +
-      NTFS Permission = Modify
-               ↓
-      Effective Network Access = Modify
-
+      NTFS Permission  = Modify
+               |
+               v
+  Effective Access     = Modify
 ```
+
+**The Test:**
+From CLIENT01, `SOC Manager1` attempted all daily file operations (reading, creating, modifying, and deleting files), followed by an attempt to modify the folder's security permissions via the Security tab.
+
+**Observation:**
+The manager successfully performed all file read/write/delete operations. However, when attempting to alter ACL permissions on the Security tab, Windows blocked the action. Because Share was set to Full Control, NTFS became the sole governing authority. Since the manager held Modify (not Full Control) in NTFS, permission changes were denied.
 
 ---
 
-### Scenario 4 — Local vs Network Access (The Share Bypass)
+### Scenario 4 - Local vs Network Access (The Share Bypass)
 
-This scenario demonstrates the critical difference between sitting at the physical server versus accessing it over the network.
+This scenario demonstrates the critical difference between local interactive logon and remote SMB access:
 
 Using the configuration from Scenario 1:
-
 * **Share Permission:** Read
 * **NTFS Permission:** Modify
 
-**The Network Test (from CLIENT01):**
-If **SOC Manager1** accesses `\\DC01\SOC-Reports` from CLIENT01, they are coming across the network. They hit the Share permission first.
-
-* *Effective Access:* **Read**
-
-**The Local Test (from DC01):**
-If **SOC Manager1** logs directly into the desktop of **DC01** and opens `C:\SOC-Lab\Reports` locally, they completely bypass the network Share permissions. Only the NTFS permissions apply.
-
-* *Effective Access:* **Modify** (They can now suddenly create and delete files).
-
-**Administrative Takeaway:**
-Share permissions *only* apply to network traffic. NTFS permissions apply to *everything*. This is why administrators must master NTFS permissions to truly secure a Windows Server environment.
+| Connection Method | User | Pathway | Effective Result | Rationale |
+| :--- | :--- | :--- | :--- | :--- |
+| **Network (SMB)** | `SOC Manager1` | Connect from CLIENT01 to `\\DC01\SOC-Reports` | **Read** | Share Read restriction is enforced over network. |
+| **Local Logon** | `SOC Manager1` | Log directly into DC01 desktop, open `C:\SOC-Reports` | **Modify** | Share permissions are completely bypassed; only NTFS applies. |
 
 ---
 
-## Practical Lab 13 — Hidden Shares & Administrative Shares
+### Summary of Permission Combinations
 
-* **Goal:** To understand how hidden shares work, verify that hiding a network share does not provide actual security, and explore the default administrative shares built into Windows Server.
-* **Machines:** **DC01** (Domain Controller / File Server) and **CLIENT01** (Network Client).
-
----
-
-### Task 01 — Create a Hidden Share
-
-First, we will create a folder and configure it as a hidden network share.
-
-**Steps:**
-
-1. On **DC01**, navigate to the `C:\` drive and create a new folder named `SOC-Secret`.
-2. Inside the folder, create a new text document named `Secret-Report.txt`.
-3. Right-click the `SOC-Secret` folder, go to **Properties → Sharing → Advanced Sharing**, and share the folder.
-4. Set the Share name to **SOC-Secret$**.
-*(The `$` symbol at the end of the share name is the exact trigger that tells Windows to make the share hidden).*
-
-![alt text](<Screenshots/85 - Secreat-FF.png>)
-
-**Testing Normal Network Browsing:**
-
-1. Log into **CLIENT01**.
-2. Open File Explorer and type `\\WIN-DEF8VDFQ099` into the address bar to browse the available shares on the server.
-
-![alt text](<Screenshots/87 - File errors list.png>)
-
-3. **Observation:** You will see standard shares (like the `SOC-Reports` folder from the previous lab), but you will **not** see `SOC-Secret$`. The share is successfully hidden from normal network browsing.
+| Scenario | Share Permission | NTFS Permission | Network Access Result | Local Access Result |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | Read | Modify | Read | Modify |
+| **2** | Change | Read | Read | Read |
+| **3** | Full Control | Modify | Modify | Modify |
+| **4** | Full Control | Read | Read | Read |
 
 ---
 
-### Task 02 — Access the Hidden Share Directly
+### What This Teaches for SOC Work
 
-Next, we will prove that hiding a share is not a substitute for securing it with proper NTFS and Share permissions.
-
-**Steps:**
-
-1. On **CLIENT01**, click the File Explorer address bar.
-2. Manually type the exact, full UNC path: `\\WIN-DEF8VDFQ099\SOC-Secret$` and press **Enter**.
-
-![alt text](<Screenshots/88 - Secret Appear.png>)
-
-3. **Observation:** The folder opens successfully, and `Secret-Report.txt` is accessible.
-
-**The Administrative Takeaway:**
-
-> **Hidden ≠ Protected**
-
-Appending a `$` to a share name simply tells the Windows OS: *"Do not display this share during normal graphical network browsing."*
-It does **not** provide:
-
-* Encryption
-* Authentication bypass prevention
-* Security protection
-* Access restriction
-
-A hidden share is completely accessible to anyone who knows (or guesses) the exact path, provided they have the underlying NTFS permissions.
+1. **Lateral Movement Dynamics:** Attackers accessing a machine via network shares (e.g., `\\host\C$`, `\\host\shared_data`) are constrained by both Share and NTFS permissions. However, if an attacker elevates to interactive logon (via RDP, PsExec, or WinRM), Share permissions are completely bypassed.
+2. **Defensive Architecture:** The enterprise best practice (Share: Full Control, NTFS: Granular) simplifies administration and prevents troubleshooting confusion. It centralizes all security enforcement in the NTFS file system where auditing, inheritance, and ownership can be monitored consistently.
 
 ---
 
-### Task 03 — Explore Administrative Shares
+<a id="practical-lab-13"></a><a id="practical-lab-13--hidden-shares--administrative-shares"></a><a id="practical-lab-13---hidden-shares--administrative-shares"></a>
+## Practical Lab 13 - Hidden Shares & Administrative Shares
 
-Windows automatically creates several default hidden shares for system management. These are called Administrative Shares.
-
-**Steps:**
-
-1. Log into **DC01**.
-2. Open **Command Prompt**, type `net share`, and press **Enter**.
-
-3. Look for the default entries ending in `$`.
-
-![alt text](<Screenshots/89 - net share.png>)
-
-**Conceptual Breakdown of Administrative Shares:**
-
-* **`C$` (Drive Share):**
-Provides direct, remote administrative access to the root of the C: drive. (If a server has a D: drive, Windows will automatically create a `D$` share as well).
-* **`ADMIN$` (System Share):**
-Maps directly to the Windows system management directory (typically `C:\Windows`). It is heavily used by system administration tools, patch management software, and Active Directory during remote operations.
-* **`IPC$` (Inter-Process Communication Share):**
-Used for named-pipe communication between programs across the network. It does not map to a physical folder on the hard drive, but rather facilitates the underlying network authentication and communication mechanisms Windows relies on.
-
-**Administrative Warning:** You should never modify, restrict, or delete these default administrative shares, as doing so will severely break Windows management capabilities and Active Directory operations.
+* **Objective:** Create and test a hidden network share, demonstrate why hiding a share provides zero security (security through obscurity), and inspect Windows default administrative shares.
+* **Related Concept:** [08 - Shared Folders](08%20-%20Shared%20Folders/README.md)
+* **Target Machines:** `DC01` (Domain Controller / File Server) and `CLIENT01` (Network Client)
+* **Domain:** `soclab.local`
 
 ---
-## Practical Lab 14 — Complete Access-Control Scenario
 
-* **Goal:** To combine all previous knowledge into a final, comprehensive exercise. We will build a small SOC file-sharing environment from scratch, configure the correct overlap of Share and NTFS permissions, and perform live testing to prove the Principle of Least Privilege is enforced.
-* **Machines:** **DC01** (File Server) and **CLIENT01** (Network Client).
+### Task 01 - Create a Hidden Share
 
-**The Target Directory Structure:**
+To demonstrate how hidden shares operate, I created a sensitive test directory and configured it with a trailing dollar sign (`$`):
+
+1. On **DC01**, I navigated to `C:\` and created a folder named `SOC-Secret`.
+2. Inside `C:\SOC-Secret`, I created a text file named `Secret-Report.txt`.
+3. I right-clicked `SOC-Secret`, opened **Properties -> Sharing -> Advanced Sharing**, and checked **Share this folder**.
+4. In the **Share name** field, I entered `SOC-Secret$`.
+
+![Configuring Hidden Share with Dollar Sign](Screenshots/85%20-%20Secret-FF.png)
+
+> **Technical Note:** In Windows networking, appending a `$` character to the end of a share name designates it as a hidden share. Windows will omit this share from standard network browsing lists.
+
+---
+
+### Task 02 - Verify Share is Hidden from Network Browsing
+
+I logged into **CLIENT01** to verify whether the share appeared in standard network listings:
+
+1. I opened File Explorer.
+2. In the address bar, I entered the server UNC path without a share name: `\\WIN-DEF8VDFQ099`.
+3. I observed the visible shares listed on the server.
+
+![Browsing Server Shares Hides Secret Share](Screenshots/87%20-%20File%20errors%20list.png)
+
+**Observation:**
+The standard `SOC-Reports` share was clearly visible, but `SOC-Secret$` did not appear in the directory listing. The share was successfully hidden from passive network browsing.
+
+---
+
+### Task 03 - Attempt Access Without the Trailing Dollar Sign
+
+To test how Windows parses hidden share paths, I attempted to connect using the folder name without the `$` symbol:
+
+1. In the CLIENT01 address bar, I entered `\\WIN-DEF8VDFQ099\SOC-Secret`.
+2. Windows returned an error dialog: `Windows cannot access \\WIN-DEF8VDFQ099.soclab.local\SOC-Secret`.
+
+![Windows Error When Accessing Without Dollar Sign](Screenshots/86%20-%20File%20Errors.png)
+
+**Observation:**
+Because the share was registered specifically as `SOC-Secret$`, SMB rejected requests directed to `SOC-Secret`. The server does not automatically correlate the share name without its explicit suffix.
+
+---
+
+### Task 04 - Access the Hidden Share Directly
+
+Next, I tested direct access by typing the full, explicit UNC path:
+
+1. In the File Explorer address bar, I entered `\\WIN-DEF8VDFQ099\SOC-Secret$`.
+2. I pressed **Enter**.
+
+![Hidden Share Accessed Directly via Full Path](Screenshots/88%20-%20Secret%20Appear.png)
+
+**Observation:**
+The folder opened immediately, and `Secret-Report.txt` was fully accessible.
+
+**Key Technical Lesson: Hidden Does Not Mean Secure**
+Appending a `$` only prevents a share from appearing in graphical network browse lists (NetServerEnum). It does **not**:
+* Encrypt network traffic
+* Restrict access permissions
+* Provide authentication controls
+* Protect data from discovery via port scanning or share enumeration tools
+
+Anyone who knows or guesses the share name can access it directly if Share and NTFS permissions allow it. Security through obscurity is not security.
+
+---
+
+### Task 05 - Inspect Windows Default Administrative Shares
+
+Windows automatically creates several built-in hidden shares for administrative and inter-process operations. I inspected these on DC01:
+
+1. On **DC01**, I opened Command Prompt.
+2. I executed `net share`:
+
+```cmd
+net share
+```
+
+![Default Administrative Shares in Net Share](Screenshots/89%20-%20net%20share.png)
+
+**Administrative Shares Breakdown:**
+
+| Share Name | Resource Path | Purpose |
+| :--- | :--- | :--- |
+| **`C$`** | `C:\` | Provides remote administrators with direct access to the entire root file system. |
+| **`ADMIN$`** | `C:\Windows` | Maps to the Windows installation directory. Used by remote management tools, patch deployment, and RPC services. |
+| **`IPC$`** | None (Named Pipes) | Facilitates Inter-Process Communication and remote named-pipe calls used by RPC, SMB authentication, and domain operations. |
+| **`NETLOGON`** | `C:\Windows\SYSVOL\sysvol\soclab.local\scripts` | Used by domain controllers to deliver logon scripts and policies to client machines. |
+| **`SYSVOL`** | `C:\Windows\SYSVOL\sysvol` | Stores Group Policy objects and domain replication data across domain controllers. |
+
+> **Administrative Warning:** Default administrative shares (`C$`, `ADMIN$`, `IPC$`) must not be deleted or disabled on enterprise domain controllers. Disabling them breaks Active Directory replication, Group Policy processing, and remote management.
+
+---
+
+### What This Teaches for SOC Work
+
+1. **Attacker Reconnaissance:** Threat actors frequently enumerate hidden and administrative shares using tools like `PowerView` (`Find-DomainShare`), BloodHound, or `crackmapexec smb --shares`.
+2. **Lateral Movement Target:** Built-in shares like `C$` and `ADMIN$` are primary staging locations for lateral movement tools (e.g., PsExec, Impacket's `psexec.py` and `smbexec.py`). Attackers drop service binaries into `ADMIN$` or `C$\Windows\System32` and remotely create a service via DCE/RPC.
+3. **Detection Opportunity:** SOC analysts should monitor Windows Security Event ID **5140** (A network share object was checked) and Event ID **5145** (A network share object was accessed with detailed permissions). High-risk alerts should trigger when non-administrative accounts attempt to access `ADMIN$` or `C$`.
+
+---
+
+<a id="practical-lab-14"></a><a id="practical-lab-14--complete-access-control-scenario"></a><a id="practical-lab-14---complete-access-control-scenario"></a>
+## Practical Lab 14 - Complete Access-Control Scenario
+
+* **Objective:** Design, deploy, and validate an end-to-end access-controlled file sharing environment combining Active Directory security groups, Share permissions, and NTFS permissions following the Principle of Least Privilege.
+* **Related Concept:** [08 - Shared Folders](08%20-%20Shared%20Folders/README.md) and [07 - NTFS Permissions](07%20-%20NTFS%20Permissions/README.md)
+* **Target Machines:** `DC01` (Domain Controller / File Server) and `CLIENT01` (Network Client)
+* **Domain:** `soclab.local`
+
+---
+
+### Design Plan: Directory Structure & Access Requirements
+
+I established an enterprise SOC departmental share structure on DC01:
 
 ```text
 C:\SOC-AccessLab
-│
-├── Analyst
-│   └── Analyst-Report.txt
-│
-├── Manager
-│   └── Manager-Report.txt
-│
-└── Admin
-    └── Admin-Report.txt
-
+|-- Analyst
+|   `-- Analyst-Report.txt
+|-- Manager
+|   `-- Manager-Report.txt
+`-- Admin
+    `-- Admin-Report.txt
 ```
 
----
-
-### Task 01 — Configure Groups
-
-For this final scenario, we do not need to create new Active Directory groups. We will utilize the security groups we already established in our domain:
-
-* **SOC-Analysts** (Contains `SOC Analyst1`)
-* **SOC-Managers** (Contains `SOC Manager1`)
-* **SOC-Admins** (Contains the Admin testing account)
+**Access Control Requirements:**
+* **SOC Analysts (`SOC-Analysts`):** Must have Read & Execute access to view reports and operational documents. Must not modify, create, or delete files.
+* **SOC Managers (`SOC-Managers`):** Must have Modify access to create, update, and delete departmental files. Must not alter folder security permissions.
+* **SOC Administrators (`SOC-Admins`):** Must have Full Control to manage all files, folders, ownership, and Access Control Lists.
 
 ---
 
-### Task 02 — NTFS Design
+### Task 01 - Verify Domain Security Groups
 
-Not every group requires the same level of access. Based on the roles and daily tasks of our SOC personnel, we will apply the following NTFS permission design to the parent folder (`C:\SOC-AccessLab`). Because of inheritance, these permissions will automatically flow down to the `Analyst`, `Manager`, and `Admin` subfolders.
-
-| Group | NTFS Permission | Purpose |
-| --- | --- | --- |
-| **SOC-Analysts** | Read & Execute | To view and execute files, without altering official records. |
-| **SOC-Managers** | Modify | To write, edit, and delete operational data. |
-| **SOC-Admins** | Full Control | To manage the data and alter security/access control lists. |
-
-**Steps:**
-
-1. On DC01, create the `C:\SOC-AccessLab` folder, its subfolders, and the text files as shown in the target structure.
-
-![alt text](<Screenshots/90 - Tree.png>)
-
-2. Right-click `SOC-AccessLab` → **Properties** → **Security**.
-3. Add the three groups and assign the exact permissions listed in the table above.
-
-![alt text](<Screenshots/91 - Permission set .png>)
+I verified that the three domain security groups were active in `soclab.local`:
+* `SOC-Analysts` (Member: `SOC Analyst1`)
+* `SOC-Managers` (Member: `SOC Manager1`)
+* `SOC-Admins` (Member: Domain Administrator account)
 
 ---
 
-### Task 03 — Share the Parent Folder
+### Task 02 - Build Folder Structure and Configure NTFS Permissions
 
-We must now share the parent folder over the network without letting the Share permissions accidentally break our NTFS design.
+1. On **DC01**, I created `C:\SOC-AccessLab` along with the `Analyst`, `Manager`, and `Admin` subdirectories and test text files.
 
-**Steps:**
+![Directory Structure Created](Screenshots/90%20-%20Tree.png)
 
-1. Right-click `SOC-AccessLab` → **Properties** → **Sharing** → **Advanced Sharing**.
-2. Check **Share this folder**. Ensure the share name is **SOC-AccessLab**.
-3. Click **Permissions**.
-4. **Critical Configuration:** To ensure the Share permission does not accidentally restrict the NTFS design (as we saw in Lab 11/12), set the `Everyone` group to **Full Control**.
-5. Click **Apply** and **OK**.
+2. I right-clicked `C:\SOC-AccessLab`, opened **Properties -> Security**, and clicked **Edit**.
+3. I added each group and configured the NTFS permissions:
 
-![alt text](<Screenshots/92 - Share set.png>)
+| Group | NTFS Permission Assigned | Effective Capability |
+| :--- | :--- | :--- |
+| **SOC-Analysts** | Read & Execute | Read folder contents, view files, execute scripts. |
+| **SOC-Managers** | Modify | Read, write, create, edit, and delete files and subfolders. |
+| **SOC-Admins** | Full Control | Complete administrative authority, including taking ownership and changing ACLs. |
 
-*Concept:* By leaving the network "front door" completely open, we force the granular NTFS permissions (The Vault) to act as the sole, precise judge of who can do what.
+![NTFS Permissions Configured for All Three Groups](Screenshots/91%20-%20Permission%20set%20.png)
 
----
-
-### Task 04 — Test Analyst Access
-
-We will now perform real-world testing from the client machine to verify the architecture.
-
-**Steps:**
-
-1. Log into **CLIENT01** using the **SOC Analyst1** credentials.
-2. Open File Explorer and navigate to: `\\WIN-DEF8VDFQ099\SOC-AccessLab`
-3. Navigate through the subfolders and test file operations.
-
-**Verified Results for SOC Analyst1:**
-
-* **Open file** → Success
-* **Read file** → Success
-* **Edit file** → Failed *(Access Denied on save)*
-* **Create file** → Failed *(Access Denied)*
-
-
-* **Delete file** → Failed *(Access Denied)*
-
-![alt text](<Screenshots/93 - Delete errors.png>)
+Because inheritance was enabled, these permissions automatically propagated down to the `Analyst`, `Manager`, and `Admin` subfolders.
 
 ---
 
-### Task 05 — Test Manager Access
+### Task 03 - Share the Master Folder (Enterprise Best Practice)
 
-Log out of CLIENT01 and log back in as the Manager to test the next tier of access.
+To avoid the Share-level bottleneck encountered in Lab 11, I applied the recommended enterprise design pattern:
 
-**Steps:**
+1. On **DC01**, I right-clicked `C:\SOC-AccessLab` -> **Properties -> Sharing -> Advanced Sharing**.
+2. I checked **Share this folder** and named the share `SOC-AccessLab`.
+3. I clicked **Permissions**.
+4. I set the `Everyone` group to **Full Control**.
+5. I clicked **Apply** and **OK**.
 
-1. Log into **CLIENT01** using the **SOC Manager1** credentials.
-2. Navigate to: `\\WIN-DEF8VDFQ099\SOC-AccessLab`
-3. Test file operations, and attempt to change the security properties of a folder.
+![Share Permission Configured to Full Control](Screenshots/92%20-%20Share%20set.png)
 
-**Verified Results for SOC Manager1:**
-
-* **Open** → Success
-* **Read** → Success
-* **Edit** → Success
-* **Create** → Success
-* **Delete** → Success
-* **Change ACL (Permissions)** → Failed *(The Security tab will prevent saving changes because the user lacks Full Control).*
-
-![alt text](<Screenshots/95 - Manager Errors.png>)
+**Design Rationale:**
+By setting Share permissions to Full Control, the network "front door" imposes no artificial bottleneck. All access enforcement is handed off entirely to the granular NTFS Access Control List (The Vault).
 
 ---
 
-### Task 06 — Test Admin Access
+### Task 04 - Validate Analyst Access from CLIENT01
 
-Finally, verify the highest tier of access.
+I logged into **CLIENT01** as `soclab\SOC Analyst1` and connected to `\\WIN-DEF8VDFQ099\SOC-AccessLab`:
 
-**Steps:**
+1. **Open and Read:** Success. I opened folders and read the contents of `Analyst-Report.txt`.
+2. **Create New File:** Failed (`Access is denied`).
+3. **Modify Existing File:** Failed (`Access is denied` on save).
+4. **Delete File:** Failed (`File Access Denied`).
 
-1. Log into **CLIENT01** using the designated **Admin account** credentials (member of `SOC-Admins`).
-2. Navigate to: `\\WIN-DEF8VDFQ099\SOC-AccessLab`
-3. Test all file operations, including modifying the Security tab.
+![Analyst Blocked from Deleting Files](Screenshots/93%20-%20Delete%20errors.png)
 
-**Verified Results for Admin Account:**
-
-* **Open** → Success
-* **Read** → Success
-* **Edit** → Success
-* **Create** → Success
-* **Delete** → Success
-* **Change permissions** → Success *(The Admin can successfully add or remove other users from the folder's ACL).*
-
+**Result:** The analyst account strictly satisfied the Read & Execute constraint.
 
 ---
 
-### Final Access Matrix
+### Task 05 - Validate Manager Access from CLIENT01
 
-Based on our deliberate configuration and the live network testing from CLIENT01, we have proven that our security model works perfectly. The verified effective access for our environment is documented below:
+I logged out of CLIENT01 and logged back in as `soclab\SOC Manager1`:
 
-| User Account | Group | Read | Modify | Delete | Change Permissions |
-| --- | --- | --- | --- | --- | --- |
-| **SOC Analyst1** | SOC-Analysts | ✓ | ✗ | ✗ | ✗ |
-| **SOC Manager1** | SOC-Managers | ✓ | ✓| ✓ | ✗ |
-| **Admin account** | SOC-Admins | ✓ | ✓ | ✓ | ✓ |
+1. I connected to `\\WIN-DEF8VDFQ099\SOC-AccessLab`.
+2. **Open and Read:** Success.
+3. **Create New File:** Success. The manager could create files and subfolders.
+4. **Modify Existing File:** Success. Edits were saved directly to the network share.
+5. **Delete File:** Success. Files were deleted without restriction.
+6. **Change ACL Permissions:** Failed (`Access is denied`). When attempting to edit the **Security** tab to add or remove users, Windows blocked the action.
+
+![Manager Blocked from Modifying Security ACLs](Screenshots/95%20-%20Manager%20Errors.png)
+
+**Result:** The manager account possessed full operational file rights (Modify) but could not tamper with security boundaries.
+
+---
+
+### Task 06 - Validate Administrator Access from CLIENT01
+
+Finally, I logged into CLIENT01 using an administrative account belonging to `SOC-Admins`:
+
+1. I connected to `\\WIN-DEF8VDFQ099\SOC-AccessLab`.
+2. **File Operations (Read, Create, Modify, Delete):** All succeeded without restriction.
+3. **Change Security Permissions:** Success. The administrator successfully modified the Access Control List on the **Security** tab.
+
+**Result:** The administrative account had full operational and governance control.
+
+---
+
+### Final Validated Access Matrix
+
+The table below summarizes the verified access levels tested across all three tiers:
+
+| Account / Group | Read Files | Modify Files | Delete Files | Modify Security ACLs | Effective Security Tier |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **SOC Analyst1** (`SOC-Analysts`) | Allowed | Denied | Denied | Denied | Read-Only Triage |
+| **SOC Manager1** (`SOC-Managers`) | Allowed | Allowed | Allowed | Denied | Operational Contributor |
+| **Admin Account** (`SOC-Admins`) | Allowed | Allowed | Allowed | Allowed | Full Security Administrator |
+
+---
+
+### What This Teaches for SOC Work
+
+1. **Principle of Least Privilege:** Users should only possess the minimum permissions necessary to perform their legitimate job functions. Over-privileged accounts represent a critical security vulnerability. If an analyst workstation is compromised, an attacker cannot wipe or tamper with shared organizational files.
+2. **Access Control Integrity:** Granular NTFS controls combined with open share permissions represent the standard enterprise architecture for file services. SOC analysts investigating unauthorized file modifications or deletions can quickly correlate user SID, group membership, and NTFS ACLs.
+3. **Privilege Escalation Detection:** Any attempt by non-admin users to modify security permissions (generating Event ID 4670 - Permissions on an object were changed) is a significant indicator of compromise (IoC) warranting immediate SOC investigation.
+
+---
+
+## Lab Exercise Summary
+
+Across these 14 practical labs, I built, configured, administered, and verified a complete Windows Server and Active Directory lab environment:
+
+1. **Server Management:** Deployed Windows Server 2022 Standard (Desktop Experience), configured server identity (`DC01`, `192.168.10.10`), and navigated Server Manager.
+2. **Roles and Features:** Installed Active Directory Domain Services (AD DS) and DNS Server roles, and promoted the server to the domain controller for `soclab.local`.
+3. **System Administration:** Managed local and domain resources via Computer Management (`compmgmt.msc`), configured Windows Services, and analyzed service dependencies.
+4. **Active Directory Identity:** Built an organized Organizational Unit (OU) hierarchy, created domain user accounts, created security groups, and managed group memberships.
+5. **File System Security:** Mastered NTFS permissions (inheritance, explicit rights, deny overrides) and Share permissions (front-door network controls).
+6. **Network File Sharing:** Implemented enterprise network shares (`SOC-Reports`, `SOC-AccessLab`), analyzed the Effective Permission Trap, documented hidden shares (`SOC-Secret$`), and validated least privilege across multiple security tiers from a client workstation (`CLIENT01`).
+
+---
+
+[<- Back to Windows Server Fundamentals](README.md) | [Back to Main Repository Hub](../README.md)

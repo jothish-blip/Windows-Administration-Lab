@@ -1,5 +1,9 @@
 # Local Users and Groups (and Domain Identities)
 
+[Windows Server Fundamentals Overview](../README.md) | [Previous: Windows Services](../05%20-%20Windows%20Services/README.md) | [Next: NTFS Permissions](../07%20-%20NTFS%20Permissions/README.md) | [Related Labs: Lab 07 (Users)](../Lab-Exercise.md#practical-lab-07--manage-domain-users-in-active-directory) & [Lab 08 (Groups)](../Lab-Exercise.md#practical-lab-08--manage-security-groups)
+
+---
+
 ## 1. What is a User Account?
 
 A **User Account** represents an individual identity that can authenticate to Windows and perform actions according to the permissions assigned to that account.
@@ -105,6 +109,29 @@ To manage identities on a Domain Controller, administrators use ADUC instead of 
 **Access Path:**
 `Server Manager → Tools → Active Directory Users and Computers` (or `Win + R → dsa.msc`)
 
-![AD](<../Screenshots/26 - AD.png>)
+![Active Directory Users and Computers](<../Screenshots/26 - AD.png>)
 
 Inside ADUC, administrators can view Organizational Units (OUs), create Domain Users (e.g., SOC Analyst 1), create Domain Groups (e.g., Analysts), and nest users inside those groups to prepare for efficient permission assignments.
+
+## Summary
+
+In this module, I studied identity and access management across local systems and Active Directory domains. I learned that on Domain Controllers, the local SAM database is superseded by the centralized Active Directory database (`NTDS.dit`). I practiced creating Organizational Units (`SOC`), domain user accounts, and security groups (`SOC-Analysts`, `SOC-Managers`, `SOC-Admins`) in ADUC (`dsa.msc`). Furthermore, I reinforced the Principle of Least Privilege: permissions should always be assigned to security groups rather than individual user accounts.
+
+---
+
+## Related Resources
+
+- **Key Terms:** [Identity, Users, and Groups Key Terms](../../Key%20Terms/Windows%20Server%20Fundamentals/README.md#6-identity-users-and-groups)
+- **Interview Preparation:** [Users & Security Groups Interview Questions & Answers](../../Interview%20Questions/Windows%20Server%20Fundamentals/06%20-%20Local%20Users%20and%20Groups.md)
+- **Practical Labs:** [Lab 07 (Domain Users) & Lab 08 (Security Groups)](../Lab-Exercise.md#practical-lab-07)
+
+---
+
+## Navigation
+
+- **Previous Module:** [05 - Windows Services](../05%20-%20Windows%20Services/README.md)
+- **Track Index:** [Windows Server Fundamentals Overview](../README.md)
+- **Next Module:** [07 - NTFS Permissions](../07%20-%20NTFS%20Permissions/README.md)
+- **Corresponding Labs:**
+  - [Practical Lab 07 - Manage Domain Users in Active Directory](../Lab-Exercise.md#practical-lab-07)
+  - [Practical Lab 08 - Manage Security Groups](../Lab-Exercise.md#practical-lab-08)
